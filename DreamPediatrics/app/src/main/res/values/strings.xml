@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Dream Pediatrics</string>
+    <string name="home">Home</string>
+    <string name="history">Recent</string>
+    <string name="bookmarks">Saved</string>
+    <string name="search">Search</string>
+    <string name="settings">Settings</string>
+
+    <!-- Search hints -->
+    <string name="search_chapters_hint">Search chapters and sections...</string>
+    <string name="search_content_hint">Search entire textbook content...</string>
+
+    <!-- Section headers -->
+    <string name="medical_textbook_chapters">Medical Textbook Chapters</string>
+    <string name="recent_reading_activity">Recent Reading Activity</string>
+    <string name="saved_bookmarks">Saved Bookmarks</string>
+    <string name="advanced_search">Advanced Search</string>
+
+    <!-- Settings -->
+    <string name="edit_profile">Edit Profile &amp; Username</string>
+    <string name="update_email">Update Email Address</string>
+    <string name="dark_mode">Dark Mode Theme</string>
+    <string name="push_notifications">Push Notifications</string>
+    <string name="change_password">Change Password</string>
+    <string name="about_app">About Dream Pediatrics</string>
+    <string name="log_out">Log Out</string>
+
+    <!-- Messages -->
+    <string name="welcome_message">Welcome to Dream Pediatrics!</string>
+    <string name="bookmark_added">Bookmark added successfully!</string>
+    <string name="dark_mode_enabled">Dark mode enabled</string>
+    <string name="light_mode_enabled">Light mode enabled</string>
+    <string name="notifications_enabled">Notifications enabled</string>
+    <string name="notifications_disabled">Notifications disabled</string>
+    <string name="profile_updated">Profile updated successfully</string>
+    <string name="email_updated">Email updated successfully</string>
+    <string name="invalid_email">Please enter a valid email address</string>
+    <string name="logging_out">Logging out...</string>
+    <string name="logout_success">You have been logged out successfully.</string>
+
+    <!-- Dialog messages -->
+    <string name="logout_confirmation">Are you sure you want to log out? Your reading progress will be saved.</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+
+    <!-- Empty states -->
+    <string name="no_history">No Reading History</string>
+    <string name="no_history_message">Start reading chapters to see your progress here</string>
+    <string name="no_bookmarks">No Bookmarks</string>
+    <string name="no_bookmarks_message">Bookmark important sections for quick access</string>
+    <string name="no_results">No Results Found</string>
+    <string name="no_results_message">No content found for "%1$s". Try different keywords or check spelling.</string>
+    <string name="search_description">Enter keywords to search through all chapters, sections, and medical content in the textbook</string>
+</resources>

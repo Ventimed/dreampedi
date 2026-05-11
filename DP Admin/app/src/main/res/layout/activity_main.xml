@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/app_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#121212">
+
+    <!-- Top App Bar -->
+    <LinearLayout
+        android:id="@+id/top_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/top_app_bar_bg"
+        android:elevation="10dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="20dp">
+
+        <TextView
+            android:id="@+id/app_bar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Admin Console"
+            android:textSize="24sp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Content -->
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- HOME PAGE -->
+        <ScrollView
+            android:id="@+id/home_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <!-- Stats Grid -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:padding="8dp"
+                    android:layout_marginBottom="16dp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/stat_pending_card"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardUseCompatPadding="true"
+                        app:cardPreventCornerOverlap="false"
+                        app:cardElevation="2dp">
+
+                        <!-- inner content kept identical to preserve look -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="20dp"
+                            android:background="@drawable/btn_selected_bg">
+
+                            <TextView
+                                android:id="@+id/stat_pending_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="24sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"/>
+
+                            <TextView
+                                android:id="@+id/stat_pending_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Pending"
+                                android:textAllCaps="true"
+                                android:layout_marginStart="16dp"
+                                android:textSize="12sp"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/stat_total_card"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardUseCompatPadding="true"
+                        app:cardPreventCornerOverlap="false"
+                        app:cardElevation="2dp">
+
+                        <!-- inner content kept identical to preserve look -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="20dp"
+                            android:background="@drawable/btn_selected_bg">
+
+                            <TextView
+                                android:id="@+id/stat_total_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="24dp"
+                                android:textStyle="bold"
+                                android:textColor="@color/black"/>
+
+                            <TextView
+                                android:id="@+id/stat_total_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Prim Users"
+                                android:textAllCaps="true"
+                                android:layout_marginStart="16dp"
+                                android:textSize="12sp"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <!-- Pending list -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/verification_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- PREMIUM PAGE -->
+        <LinearLayout
+            android:id="@+id/premium_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/premium_search"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="Search by UID or Transaction ID..."
+                android:padding="12dp"
+                android:textColor="@color/white_faint"
+                android:textColorHint="#8C8B8B"
+                android:background="@drawable/search_bar_bg"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/premium_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="12dp"/>
+        </LinearLayout>
+
+        <!-- NOTIFICATIONS PAGE -->
+        <ScrollView
+            android:id="@+id/notifications_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center_horizontal"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:id="@+id/notification_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:padding="4dp">
+
+                    <!-- Send to All tab -->
+                    <LinearLayout
+                        android:id="@+id/btn_send_all"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:clickable="true"
+                        android:background="@drawable/btn_selected_bg"
+                        android:focusable="true">
+
+                        <TextView
+                            android:id="@+id/label_send_all"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Send to All"
+                            android:textAllCaps="true"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"/>
+                    </LinearLayout>
+
+                    <!-- Send to User tab -->
+                    <LinearLayout
+                        android:id="@+id/btn_send_specific"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <TextView
+                            android:id="@+id/label_send_specific"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Send to User"
+                            android:textAllCaps="true"
+                            android:textSize="14sp"
+                            android:textColor="@color/white_faint"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/fcm_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FCM Token"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white_faint"/>
+                    <EditText
+                        android:id="@+id/fcm_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="Enter FCM token..."
+                        android:padding="12dp"
+                        android:maxLines="1"
+                        android:ellipsize="middle"
+                        android:textColor="@color/white_faint"
+                        android:textColorHint="#8C8B8B"
+                        android:background="@drawable/search_bar_bg"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Notification Title"
+                    android:textAllCaps="true"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/white_faint"/>
+                <EditText
+                    android:id="@+id/title_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Enter notification title..."
+                    android:padding="12dp"
+                    android:textColor="@color/white_faint"
+                    android:textColorHint="#8C8B8B"
+                    android:background="@drawable/search_bar_bg"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Notification Body"
+                    android:textAllCaps="true"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/white_faint"/>
+                <EditText
+                    android:id="@+id/body_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:hint="Enter notification message..."
+                    android:padding="12dp"
+                    android:gravity="top"
+                    android:textColor="@color/white_faint"
+                    android:textColorHint="#8C8B8B"
+                    android:background="@drawable/search_bar_bg"/>
+
+                <Button
+                    android:id="@+id/send_notification_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_gravity="center"
+                    android:drawableStart="@drawable/ic_send"
+                    android:text="Send Notification"/>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </FrameLayout>
+
+    <!-- Bottom Navigation -->
+    <LinearLayout
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <LinearLayout
+            android:id="@+id/nav_home"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/nav_home_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_home"
+                app:tint="@color/white_faint"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Home"
+                android:textSize="12sp"
+                android:textColor="@color/white_faint"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="#E2E2E2"
+            android:layout_marginVertical="20dp"/>
+
+        <LinearLayout
+            android:id="@+id/nav_premium"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/nav_premium_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_star"
+                app:tint="@color/white_faint"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Premium"
+                android:textSize="12sp"
+                android:textColor="@color/white_faint"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="#E2E2E2FF"
+            android:layout_marginVertical="20dp"/>
+
+        <LinearLayout
+            android:id="@+id/nav_notifications"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/nav_notifications_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_notification_off"
+                app:tint="@color/white_faint"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notifications"
+                android:textSize="12sp"
+                android:textColor="@color/white_faint"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

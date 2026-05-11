@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Subtle outer "shadow" layer (darker, blurred-ish simulated by offset color) -->
+    <item android:top="6dp" android:left="0dp" android:right="0dp" android:bottom="0dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#22000000"/> <!-- subtle translucent dark to simulate shadow -->
+            <corners android:radius="16dp"/>
+        </shape>
+    </item>
+
+    <!-- Main rounded card background -->
+    <item android:top="0dp" android:left="0dp" android:right="0dp" android:bottom="6dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/primary_container"/> <!-- card surface color, change to your theme color -->
+            <stroke android:width="1dp" android:color="#22000000"/>
+            <corners android:radius="16dp"/>
+            <padding android:left="12dp" android:top="12dp" android:right="12dp" android:bottom="12dp" />
+        </shape>
+    </item>
+
+</layer-list>

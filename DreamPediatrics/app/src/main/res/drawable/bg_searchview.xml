@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- Surface color background -->
+    <solid android:color="#FDF3B9" />
+    <!-- 1dp stroke like M3 outline -->
+    <stroke
+        android:width="0dp"
+        android:color="?attr/colorOutline" />
+    <!-- 24dp corners -->
+    <corners android:radius="32dp" />
+    <!-- Elevation shadow on pre‑21 devices if you like -->
+</shape>

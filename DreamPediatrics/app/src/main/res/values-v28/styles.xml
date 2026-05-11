@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <!-- main visual settings -->
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:lineHeight">28sp</item>
+
+        <!-- color should follow current theme; use colorOnSurface attribute so it adapts to light/dark -->
+        <item name="android:textColor">?attr/colorOnSurface</item>
+
+        <!-- optional: tweak letter spacing / font -->
+        <item name="android:letterSpacing">0.01</item>
+        <!-- Uncomment and set a font resource if you have one -->
+        <!-- <item name="android:fontFamily">@font/your_sans_font</item> -->
+    </style>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+        <!-- Force dark mode rendering -->
+        <item name="android:forceDarkAllowed" tools:targetApi="q">true</item>
+        <item name="android:statusBarColor">@color/amber_600</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+
+    </style>
+</resources>

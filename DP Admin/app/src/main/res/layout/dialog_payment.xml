@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/payment_dialog_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:layout_marginHorizontal="24dp"
+    android:overScrollMode="never"
+    android:background="@drawable/card_elevated">
+
+    <LinearLayout
+        android:id="@+id/modal_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/payment_method_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:padding="3dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_bank_placeholder" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="right">
+
+                <ImageView
+                    android:id="@+id/modal_close"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_close"
+                    app:tint="@color/danger_dark" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User ID"
+            android:textStyle="bold"
+            android:textColor="@color/white_faint" />
+
+        <TextView
+            android:id="@+id/modal_uid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white_faint" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Transaction ID"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/white_faint" />
+
+        <TextView
+            android:id="@+id/modal_transaction_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white_faint" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Amount"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/white_faint" />
+
+        <TextView
+            android:id="@+id/modal_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FCM Token"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/white_faint" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/modal_fcm"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="(last 8 chars shown)"
+                android:textColor="@color/white_faint"  />
+
+            <ImageView
+                android:id="@+id/modal_copy_fcm"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_copy"
+                android:contentDescription="Copy FCM"
+                android:tint="@color/white_faint"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <!-- Buttons row: Verify, Save as Premium (with progress), Lock, Delete -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/btn_verify"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="6dp"
+                    android:text="Verify"
+                    android:layout_weight="1"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/amber_500" />
+
+                <Button
+                    android:id="@+id/btn_lock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="6dp"
+                    android:backgroundTint="#00BCD4"
+                    android:text="Lock"
+                    android:layout_weight="1"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white" />
+                <Button
+                    android:id="@+id/btn_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="6dp"
+                    android:backgroundTint="#F44336"
+                    android:text="Delete"
+                    android:layout_weight="1"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white" />
+
+            </LinearLayout>
+
+
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="0dp"
+                android:layout_marginVertical="6dp">
+
+                <Button
+                    android:id="@+id/btn_save_premium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Save as Premium"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/success_dark" />
+
+                <ProgressBar
+                    android:id="@+id/save_progress"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">@color/primary_night</color>
+    <color name="toolbar_bg">#1D1D1D</color>
+    <color name="primary_dark">@color/primary_dark_night</color>
+    <color name="primary_container">@color/primary_container_night</color>
+    <color name="on_primary">@color/on_primary_night</color>
+    <color name="snackbar">#1A1A1A</color>
+    <color name="navText">#FFC107</color>
+    <color name="on_primary_container">@color/on_primary_container_night</color>
+    <color name="surface">@color/surface_night</color>
+    <color name="surface_variant">@color/surface_variant_night</color>
+    <color name="surface_container">@color/surface_container_night</color>
+    <color name="surface_container_high">@color/surface_container_high_night</color>
+    <color name="on_surface">@color/on_surface_night</color>
+    <color name="on_surface_variant">@color/on_surface_variant_night</color>
+    <color name="outline">@color/outline_night</color>
+    <color name="outline_variant">@color/outline_variant_night</color>
+    <color name="toolbar_title_color">#FFFFFF</color>  <!-- White color for night mode -->
+
+</resources>

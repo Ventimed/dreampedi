@@ -1,0 +1,813 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:contentInsetStart="16dp"
+            android:contentInsetEnd="16dp"
+            android:background="@color/toolbar_bg"
+            app:titleTextAppearance="@style/BoldToolbarTitle" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingVertical="24dp"
+            android:paddingHorizontal="16dp">
+
+            <!-- About Section -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="16dp"
+                android:layout_marginHorizontal="6dp"
+                android:background="?attr/colorSurfaceVariant"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_users"
+                            android:layout_marginEnd="8dp"
+                            app:tint="@color/primary_dark" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="About Dream Pediatrics"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorOnSurface"  />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="This book is intended to maintain interest of university or college students who have taken up pediatrics as one of their core subjects. It is designed to present the subject matter in a simple and well-organized way and to arouse the curiosity of the beginners in the field of pediatrics. It provides a short and precise notes on common short cases and procedures in pediatrics."
+                        android:textSize="14dp"
+                        android:textColor="?attr/colorOnSurface"
+                        android:lineSpacingExtra="4dp"
+                        android:layout_marginBottom="16dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Keeping this in mind, this book, “DREAM PEDIATRICS a quick revision on common SHORT CASES and PROCEDURES” has been brought as an aid for students to review quickly before clinical physical examinations and procedures. This book is also useful to medical interns and general practitioners as well. And I hope it will earn its value in its own way in the student circle."
+                        android:textSize="14dp"
+                        android:textColor="?attr/colorOnSurface"
+                        android:lineSpacingExtra="4dp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="16dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_bookmark_solid"
+                            android:layout_marginEnd="8dp"
+                            app:tint="@color/primary_dark" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bridging theory and practice for clinical excellence"
+                            android:textSize="14sp"
+                            android:textColor="@android:color/darker_gray" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Features Section -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="?attr/colorSurfaceVariant"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_book"
+                            android:layout_marginEnd="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="App Features"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorOnSurface"  />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <!-- Feature 1 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="16dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/circle_bg_yellow"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:layout_marginEnd="12dp">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_book_open"
+                                    app:tint="@color/primary_dark" />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="37 comprehensive chapters covering all aspects of Pediatric Short Exams and Procedures"
+                                android:textSize="16sp"
+                                android:textColor="?attr/colorOnSurface"
+                                android:lineSpacingExtra="2dp" />
+
+                        </LinearLayout>
+
+                        <!-- Feature 2 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="16dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/circle_bg_yellow"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:layout_marginEnd="12dp">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_search"
+                                    app:tint="@color/primary_dark"  />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Advanced search with filters and instant results"
+                                android:textSize="16sp"
+                                android:textColor="?attr/colorOnSurface"
+                                android:lineSpacingExtra="2dp" />
+
+                        </LinearLayout>
+
+                        <!-- Feature 3 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="16dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/circle_bg_yellow"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:layout_marginEnd="12dp">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_check_circle"
+                                    app:tint="@color/primary_dark" />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Reading progress tracking across all chapters"
+                                android:textSize="16sp"
+                                android:textColor="?attr/colorOnSurface"
+                                android:lineSpacingExtra="2dp" />
+
+                        </LinearLayout>
+
+                        <!-- Feature 4 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="16dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/circle_bg_yellow"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:layout_marginEnd="12dp">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_bookmark_tp"
+                                    app:tint="@color/primary_dark"  />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Bookmark system for quick reference and favorites"
+                                android:textSize="16sp"
+                                android:textColor="?attr/colorOnSurface"
+                                android:lineSpacingExtra="2dp" />
+
+                        </LinearLayout>
+
+                        <!-- Feature 6 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/circle_bg_yellow"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:layout_marginEnd="12dp">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_offline"
+                                    app:tint="@color/primary_dark" />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Offline reading capability - access content anywhere"
+                                android:textSize="16sp"
+                                android:textColor="?attr/colorOnSurface"
+                                android:lineSpacingExtra="2dp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Contact & Info Section -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="?attr/colorSurfaceVariant"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Contact Us"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface"
+                        android:layout_marginBottom="16dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="8dp"
+                            android:gravity="center_vertical">
+
+                            <FrameLayout
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:background="@drawable/rounded_bg_light_blue">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_email"  />
+
+                            </FrameLayout>
+
+                            <TextView
+                                android:id="@+id/email1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="yonasdg.12@gmail.com"
+                                android:textSize="16sp"
+                                android:textColor="?attr/colorOnSurface"
+                                android:layout_marginStart="8dp"/>
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="8dp"
+                            android:visibility="gone"
+                            android:gravity="center_vertical">
+
+                            <FrameLayout
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:background="@drawable/rounded_bg_light_blue">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_email"
+                                    app:tint="@color/primary_search_highlight"  />
+
+                            </FrameLayout>
+
+                            <TextView
+                                android:id="@+id/email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="support@dreampediatrics.com"
+                                android:textSize="16sp"
+                                android:textColor="@color/on_primary"
+                                android:layout_marginStart="8dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="8dp"
+                            android:gravity="center_vertical" >
+                            <FrameLayout
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:background="@drawable/rounded_bg_light_blue">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_telegram"
+                                    app:tint="@color/primary_dark"  />
+
+                            </FrameLayout>
+
+                            <TextView
+                                android:id="@+id/twitter"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="t.me/dream_pedi"
+                                android:textSize="16sp"
+                                android:textColor="#2196F3"
+                                android:layout_marginStart="8dp"/>
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="8dp"
+                            android:gravity="center_vertical" >
+                            <FrameLayout
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:background="@drawable/rounded_bg_light_blue">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_telegram"
+                                    app:tint="@color/primary_dark"  />
+
+                            </FrameLayout>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="+251942106931"
+                                android:textSize="16sp"
+                                android:textColor="?attr/colorOnSurface"
+                                android:layout_marginStart="8dp"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Previous Apps Section -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="?attr/colorSurfaceVariant"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Related VentiMed Apps"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface"
+                        android:gravity="center"
+                        android:layout_marginBottom="16dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <!-- Neuro -->
+                        <LinearLayout
+                            android:id="@+id/vmb"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="16dp">
+
+                            <ImageView
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:src="@drawable/vmb"
+                                android:padding="10dp"
+                                android:gravity="center"
+                                android:background="@drawable/circle_vmblue"
+                                android:layout_marginBottom="8dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Ventimed Green"
+                                android:gravity="center"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorOnSurface"  />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/vmg"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="16dp">
+
+                            <ImageView
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:src="@drawable/vmg"
+                                android:padding="10dp"
+                                android:gravity="center"
+                                android:background="@drawable/circle_vmgreen"
+                                android:layout_marginBottom="8dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Ventimed Green"
+                                android:gravity="center"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorOnSurface"  />
+
+                        </LinearLayout>
+
+                        <!-- Ortho -->
+                        <LinearLayout
+                            android:id="@+id/gg"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="16dp">
+
+                            <ImageView
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:src="@drawable/gg"
+                                android:padding="10dp"
+                                android:gravity="center"
+                                android:background="@drawable/circle_gg"
+                                android:layout_marginBottom="8dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="NGAT"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorOnSurface"  />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="NGAT"
+                                android:textSize="14sp"
+                                android:visibility="invisible"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorOnSurface"  />
+
+                        </LinearLayout>
+
+                        <!-- Derma -->
+                        <LinearLayout
+                            android:id="@+id/derma"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:visibility="gone"
+                            android:layout_marginStart="8dp">
+
+                            <ImageView
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:src="@drawable/ic_email"
+                                android:gravity="center"
+                                android:background="@drawable/circle_bg_yellow"
+                                android:layout_marginBottom="8dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Derma"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorOnSurface"  />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="8dp"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical" >
+                        <FrameLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/rounded_bg_light_blue">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_email"  />
+
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/email2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="ventimedguide@gmail.com"
+                            android:textSize="16sp"
+                            android:textColor="?attr/colorOnSurface"
+                            android:layout_marginStart="8dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="8dp"
+                        android:gravity="center_vertical" >
+                        <FrameLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/rounded_bg_light_blue">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_telegram"
+                                app:tint="@color/primary_dark"  />
+
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/tgvm"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="t.me/ventimed_support"
+                            android:textSize="16sp"
+                            android:textColor="#2196F3"
+                            android:layout_marginStart="8dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Footer -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@color/primary_dark">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="24dp">
+
+                    <!-- 1) Author / copyright paragraph -->
+                    <TextView
+                        android:id="@+id/text_written_by"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Written by \nDr. Yonas Gashaye (MD, MPHN)"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/on_primary"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/text_copyright_long"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="© All rights reserved. No part of this book may be reproduced in any form without the prior written permission of the author."
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="4dp"
+                        android:textColor="@color/on_primary"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- 2) Developed by -->
+                    <TextView
+                        android:id="@+id/text_developed_by"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Developed by VentiMed Apps"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/on_primary"
+                        android:layout_marginBottom="8dp" />
+
+                    <!-- existing copyright & version (kept) -->
+                    <TextView
+                        android:id="@+id/footer_copyright_short"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="© 2025 All rights reserved"
+                        android:textSize="14sp"
+                        android:textColor="@color/on_primary"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/footer_version"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Version v2.1.0"
+                        android:textSize="12sp"
+                        android:textColor="@color/on_primary" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

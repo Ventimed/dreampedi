@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@color/toolbar_bg"
+        app:elevation="4dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:contentInsetStart="16dp"
+            android:contentInsetEnd="16dp"
+            android:background="@color/toolbar_bg"
+            app:titleTextAppearance="@style/BoldToolbarTitle">
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Chapter progress below toolbar -->
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/chapterProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:indeterminate="false"
+        android:max="100"
+        android:layout_marginBottom="8dp"
+        app:indicatorColor="@color/navText"
+        app:trackColor="@color/outline_variant" />
+
+    <!-- Content scroll area -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/chapterScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:padding="16dp"
+        android:clipToPadding="false">
+
+    <LinearLayout
+        android:id="@+id/topicsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+</androidx.core.widget.NestedScrollView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
