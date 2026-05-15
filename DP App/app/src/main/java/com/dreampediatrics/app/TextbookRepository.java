@@ -40,9 +40,22 @@ public class TextbookRepository {
         if (json == null) return;
         io.execute(() -> {
             try {
-                JSONObject root = new JSONObject(json);
-                JSONArray chaptersArray = root.optJSONArray("chapters");
-                if (chaptersArray == null) return;
+                // The JSON can be either an array directly or an object with "chapters" key
+                JSONArray chaptersArray;
+                
+                // Try to parse as array first
+                if (json.trim().startsWith("[")) {
+                    chaptersArray = new JSONArray(json);
+                } else {
+                    // Parse as object with "chapters" key
+                    JSONObject root = new JSONObject(json);
+                    chaptersArray = root.optJSONArray("chapters");
+                }
+                
+                if (chaptersArray == null || chaptersArray.length() == 0) {
+                    Log.e(TAG, "No chapters found in JSON");
+                    return;
+                }
 
                 List<ChapterEntity> chapters = new ArrayList<>();
                 List<TopicEntity> topics = new ArrayList<>();
@@ -64,7 +77,7 @@ public class TextbookRepository {
                             String topicId = top.optString("id", chapterId + "_t" + (t + 1));
                             int tnum = top.optInt("number", t + 1);
                             String ttitle = top.optString("title", "Topic " + (t + 1));
-                            String contentHtml = top.optString("content_html", "");
+                            String contentHtml = top.optString("content", "");
                             JSONArray imagesArr = top.optJSONArray("images");
                             String imagesCsv = null;
                             if (imagesArr != null && imagesArr.length() > 0) {

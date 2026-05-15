@@ -43,6 +43,13 @@ dependencies {
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation 'androidx.room:room-runtime:2.6.1'
 
+    // Markdown rendering library
+    implementation 'io.noties.markwon:core:4.6.2'
+    implementation 'io.noties.markwon:html:4.6.2'
+    implementation 'io.noties.markwon:image:4.6.2'
+    implementation 'io.noties.markwon:ext-tables:4.6.2'
+    implementation 'io.noties.markwon:ext-strikethrough:4.6.2'
+
     implementation libs.firebase.storage
     implementation libs.firebase.auth
     implementation libs.firebase.database

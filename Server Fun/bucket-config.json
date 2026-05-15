@@ -1,0 +1,19 @@
+{
+  "project_id": "dream-pedi",
+  "private_bucket": "dream-pedi-secrets",
+  "key_path": "aes_key.bin",
+  "function_name": "wrapAesKey",
+  "region": "us-central1",
+  "notes": {
+    "private_bucket": "This is where your aes_key.bin is stored (must be private)",
+    "key_path": "Path to the AES key file within the bucket",
+    "common_bucket_names": [
+      "dream-pedi-secrets",
+      "dream-pedi.firebasestorage.app",
+      "dream-pedi-keys",
+      "dreamprod"
+    ],
+    "how_to_find_your_bucket": "Run: gsutil ls",
+    "how_to_verify_key_exists": "Run: gsutil ls gs://YOUR-BUCKET-NAME/aes_key.bin"
+  }
+}

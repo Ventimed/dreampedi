@@ -451,9 +451,9 @@ public class HomeFragment extends Fragment {
         downloadProgress.setVisibility(View.VISIBLE);
         downloadProgress.setProgress(0);
 
-        // Firebase Storage reference
-        com.google.firebase.storage.FirebaseStorage storage = com.google.firebase.storage.FirebaseStorage.getInstance();
-        com.google.firebase.storage.StorageReference ref = storage.getReference().child("textbook.enc");
+        // Firebase Storage reference - explicitly use dream-pedi bucket
+        com.google.firebase.storage.FirebaseStorage storage = com.google.firebase.storage.FirebaseStorage.getInstance("gs://dream-pedi");
+        com.google.firebase.storage.StorageReference ref = storage.getReference().child("textbooks/textbook.enc");
 
         // Local target file
         File outDir = new File(ctx.getFilesDir(), "downloaded_textbook");

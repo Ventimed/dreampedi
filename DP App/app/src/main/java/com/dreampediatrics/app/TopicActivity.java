@@ -36,6 +36,12 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.material.snackbar.Snackbar;
 
+import io.noties.markwon.Markwon;
+import io.noties.markwon.html.HtmlPlugin;
+import io.noties.markwon.image.ImagesPlugin;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -59,6 +65,7 @@ public class TopicActivity extends AppCompatActivity {
     private final Executor io = Executors.newSingleThreadExecutor();
     private long rowid;
     private String highlightTerm;
+    private Markwon markwon;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,6 +91,14 @@ public class TopicActivity extends AppCompatActivity {
         }
 
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Initialize Markwon for Markdown rendering
+        markwon = Markwon.builder(this)
+                .usePlugin(HtmlPlugin.create())
+                .usePlugin(ImagesPlugin.create())
+                .usePlugin(TablePlugin.create(this))
+                .usePlugin(StrikethroughPlugin.create())
+                .build();
 
         loadAndMarkTopic();
 
@@ -208,20 +223,25 @@ public class TopicActivity extends AppCompatActivity {
                 topicTitleView.setText(t.title);
 
                 String rawContent = t.content != null ? t.content : "";
+                
+                // Preprocess content: Convert single \n to Markdown hard breaks (two spaces + \n)
+                // This makes single newlines create actual line breaks in the rendered output
+                rawContent = preprocessMarkdownLineBreaks(rawContent);
 
-                // parse custom content into a Spannable which may contain inline ImageSpans
-                SpannableStringBuilder sp = parseCustomContent(rawContent);
-
+                // Render Markdown content using Markwon
                 if (highlightTerm != null && !highlightTerm.trim().isEmpty()) {
-                    SpannableStringBuilder ssb = new SpannableStringBuilder(sp);
+                    // First render markdown, then apply highlighting
+                    Spannable rendered = (Spannable) markwon.toMarkdown(rawContent);
+                    SpannableStringBuilder ssb = new SpannableStringBuilder(rendered);
                     highlightOccurrences(ssb, highlightTerm);
                     topicContent.setText(ssb);
                     topicContent.post(() -> scrollToFirstOccurrence(ssb, highlightTerm));
                 } else {
-                    topicContent.setText(sp);
+                    // Just render markdown
+                    markwon.setMarkdown(topicContent, rawContent);
                 }
 
-                // Ensure inline image clicks work
+                // Ensure links work
                 topicContent.setMovementMethod(LinkMovementMethod.getInstance());
                 topicContent.setHighlightColor(Color.TRANSPARENT);
 
@@ -534,9 +554,89 @@ public class TopicActivity extends AppCompatActivity {
 
     private String getSnippetPlain(String content) {
         if (content == null) return "";
-        String plain = Html.fromHtml(content, Html.FROM_HTML_MODE_LEGACY).toString().trim();
+        // Strip markdown first, then convert any HTML
+        String stripped = stripMarkdown(content);
+        String plain = Html.fromHtml(stripped, Html.FROM_HTML_MODE_LEGACY).toString().trim();
         if (plain.length() <= 120) return plain;
         return plain.substring(0, 120) + "...";
+    }
+
+    /**
+     * Preprocess Markdown content to convert single newlines to hard breaks.
+     * In standard Markdown, you need two spaces + newline OR double newline for breaks.
+     * This method converts single \n to double-space + \n (hard break in Markdown).
+     */
+    private String preprocessMarkdownLineBreaks(String content) {
+        if (content == null) return "";
+        
+        // Replace single newlines with two spaces + newline (Markdown hard break)
+        // But preserve double newlines (paragraph breaks)
+        // Strategy: First protect double newlines, then convert singles, then restore doubles
+        
+        String placeholder = "<<<PARAGRAPH_BREAK>>>";
+        
+        // Step 1: Replace \n\n with placeholder
+        String result = content.replace("\n\n", placeholder);
+        
+        // Step 2: Replace remaining single \n with two spaces + \n (hard break)
+        result = result.replace("\n", "  \n");
+        
+        // Step 3: Restore paragraph breaks
+        result = result.replace(placeholder, "\n\n");
+        
+        return result;
+    }
+
+    /**
+     * Strip common Markdown formatting characters to show plain text in snippets.
+     */
+    private String stripMarkdown(String input) {
+        if (input == null) return "";
+        String result = input;
+        
+        // Remove bold: **text** or __text__
+        result = result.replaceAll("\\*\\*([^*]+)\\*\\*", "$1");
+        result = result.replaceAll("__([^_]+)__", "$1");
+        
+        // Remove italic: *text* or _text_
+        result = result.replaceAll("\\*([^*]+)\\*", "$1");
+        result = result.replaceAll("_([^_]+)_", "$1");
+        
+        // Remove strikethrough: ~~text~~
+        result = result.replaceAll("~~([^~]+)~~", "$1");
+        
+        // Remove inline code: `text`
+        result = result.replaceAll("`([^`]+)`", "$1");
+        
+        // Remove links: [text](url)
+        result = result.replaceAll("\\[([^\\]]+)\\]\\([^)]+\\)", "$1");
+        
+        // Remove images: ![alt](url)
+        result = result.replaceAll("!\\[([^\\]]*)\\]\\([^)]+\\)", "$1");
+        
+        // Remove headers: # text
+        result = result.replaceAll("^#{1,6}\\s+", "");
+        result = result.replaceAll("\\n#{1,6}\\s+", "\n");
+        
+        // Remove list markers: - or * or + or 1.
+        result = result.replaceAll("^[\\-\\*\\+]\\s+", "");
+        result = result.replaceAll("\\n[\\-\\*\\+]\\s+", "\n");
+        result = result.replaceAll("^\\d+\\.\\s+", "");
+        result = result.replaceAll("\\n\\d+\\.\\s+", "\n");
+        
+        // Remove blockquote markers: >
+        result = result.replaceAll("^>\\s+", "");
+        result = result.replaceAll("\\n>\\s+", "\n");
+        
+        // Remove horizontal rules: --- or ***
+        result = result.replaceAll("^[-*_]{3,}$", "");
+        result = result.replaceAll("\\n[-*_]{3,}\\n", "\n");
+        
+        // Clean up any remaining asterisks or underscores that weren't part of formatting
+        result = result.replaceAll("\\*+", "");
+        result = result.replaceAll("_+", "");
+        
+        return result;
     }
 
     private void updateStatusBarColor() {

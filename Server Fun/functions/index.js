@@ -2,6 +2,7 @@
 'use strict';
 
 const functions = require('firebase-functions');
+const { defineString } = require('firebase-functions/params');
 const admin = require('firebase-admin');
 const crypto = require('crypto');
 
@@ -13,10 +14,18 @@ process.on('unhandledRejection', (reason, p) => {
   console.error('Unhandled Rejection at:', p, 'reason:', reason);
 });
 
-const KEY_BUCKET = process.env.TEXTBOOK_KEY_BUCKET || 'dreamprod';
-const KEY_PATH   = process.env.TEXTBOOK_KEY_PATH   || 'aes_key.bin';
+// Modern approach: Use Firebase params (replaces deprecated functions.config())
+const KEY_BUCKET = defineString('TEXTBOOK_KEY_BUCKET', {
+  description: 'Private bucket name where aes_key.bin is stored',
+  default: 'dream-pedi-secrets'
+});
 
-console.log('Configured KEY_BUCKET=' + KEY_BUCKET + ' KEY_PATH=' + KEY_PATH);
+const KEY_PATH = defineString('TEXTBOOK_KEY_PATH', {
+  description: 'Path to the AES key file within the bucket',
+  default: 'aes_key.bin'
+});
+
+console.log('wrapAesKey configured with params');
 
 async function verifyIdTokenFromRequest(req) {
   const authHeader = req.get('Authorization') || req.get('authorization');
@@ -30,7 +39,11 @@ async function verifyIdTokenFromRequest(req) {
 
 async function handleWrapAesKey(req, res) {
   try {
+    const keyBucket = KEY_BUCKET.value();
+    const keyPath = KEY_PATH.value();
+    
     console.log('Received request for wrapAesKey, method:', req.method);
+    console.log('Using bucket:', keyBucket, 'path:', keyPath);
 
     if (req.method !== 'POST') {
       res.status(405).send('POST only');
@@ -45,11 +58,11 @@ async function handleWrapAesKey(req, res) {
       return res.status(400).json({ error: 'missing device_public_key_b64' });
     }
 
-    const bucket = admin.storage().bucket(KEY_BUCKET);
-    const file = bucket.file(KEY_PATH);
+    const bucket = admin.storage().bucket(keyBucket);
+    const file = bucket.file(keyPath);
     const [exists] = await file.exists();
     if (!exists) {
-      console.error('AES key not found at', KEY_BUCKET, KEY_PATH);
+      console.error('AES key not found at', keyBucket, keyPath);
       return res.status(500).json({ error: 'AES key not found on server' });
     }
     const [keyBuf] = await file.download();

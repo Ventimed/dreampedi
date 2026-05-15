@@ -112,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
     // DB executor for background work
     private final ExecutorService dbExecutor = Executors.newSingleThreadExecutor();
     private static final String KEY_ALIAS = "dp_device_key";
-    // <<-- REPLACE this with your real Cloud Function URL:
-    private static final String CLOUD_FUNCTION_WRAP_URL = "https://wrapaeskey-4jzb4qgvzq-uc.a.run.app";
+    // Cloud Function URL for wrapping AES key
+    private static final String CLOUD_FUNCTION_WRAP_URL = "https://us-central1-dream-pedi.cloudfunctions.net/wrapAesKey";
 
     // reference to DAO
     private AppDao dao;

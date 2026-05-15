@@ -306,3 +306,6 @@ __pycache__/
 # Uncomment if you have local test data
 # test-data/
 # sample-data/
+
+# Converter folder (DOCX to Markdown conversion scripts)
+converter/

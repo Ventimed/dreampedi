@@ -170,7 +170,62 @@ public class ChapterActivity extends AppCompatActivity {
     private static String stripHtmlFast(String input) {
         if (input == null) return "";
         // remove tags like <...>
-        return input.replaceAll("<[^>]+>", "");
+        String result = input.replaceAll("<[^>]+>", "");
+        // Strip Markdown formatting
+        result = stripMarkdownFast(result);
+        return result;
+    }
+
+    /**
+     * Strip common Markdown formatting characters to show plain text in snippets.
+     */
+    private static String stripMarkdownFast(String input) {
+        if (input == null) return "";
+        String result = input;
+        
+        // Remove bold: **text** or __text__
+        result = result.replaceAll("\\*\\*([^*]+)\\*\\*", "$1");
+        result = result.replaceAll("__([^_]+)__", "$1");
+        
+        // Remove italic: *text* or _text_
+        result = result.replaceAll("\\*([^*]+)\\*", "$1");
+        result = result.replaceAll("_([^_]+)_", "$1");
+        
+        // Remove strikethrough: ~~text~~
+        result = result.replaceAll("~~([^~]+)~~", "$1");
+        
+        // Remove inline code: `text`
+        result = result.replaceAll("`([^`]+)`", "$1");
+        
+        // Remove links: [text](url)
+        result = result.replaceAll("\\[([^\\]]+)\\]\\([^)]+\\)", "$1");
+        
+        // Remove images: ![alt](url)
+        result = result.replaceAll("!\\[([^\\]]*)\\]\\([^)]+\\)", "$1");
+        
+        // Remove headers: # text
+        result = result.replaceAll("^#{1,6}\\s+", "");
+        result = result.replaceAll("\\n#{1,6}\\s+", "\n");
+        
+        // Remove list markers: - or * or + or 1.
+        result = result.replaceAll("^[\\-\\*\\+]\\s+", "");
+        result = result.replaceAll("\\n[\\-\\*\\+]\\s+", "\n");
+        result = result.replaceAll("^\\d+\\.\\s+", "");
+        result = result.replaceAll("\\n\\d+\\.\\s+", "\n");
+        
+        // Remove blockquote markers: >
+        result = result.replaceAll("^>\\s+", "");
+        result = result.replaceAll("\\n>\\s+", "\n");
+        
+        // Remove horizontal rules: --- or ***
+        result = result.replaceAll("^[-*_]{3,}$", "");
+        result = result.replaceAll("\\n[-*_]{3,}\\n", "\n");
+        
+        // Clean up any remaining asterisks or underscores that weren't part of formatting
+        result = result.replaceAll("\\*+", "");
+        result = result.replaceAll("_+", "");
+        
+        return result;
     }
 
     private String makeSnippet(String text) {
