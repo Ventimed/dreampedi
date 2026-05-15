@@ -8,6 +8,7 @@ public class TopicSummary {
     public long rowid;         // maps to sqlite rowid
     public String chapterId;
     public String title;
-    public String snippet;     // substring(content,1,300) returned by query
+    public String description; // Short curated description for card views
+    public String snippet;     // substring(content,1,300) returned by query (fallback)
     public boolean completed;
 }

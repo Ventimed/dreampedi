@@ -267,8 +267,12 @@ public class HomeFragment extends Fragment {
             TextView badgeView = chapterView.findViewById(R.id.badge);
             androidx.cardview.widget.CardView cardView = (androidx.cardview.widget.CardView) chapterView;
 
-            titleView.setText(ch.title);
-            subtitleView.setText(ch.description != null ? ch.description : "");
+            // Strip markdown formatting from title and description
+            String plainTitle = stripMarkdownFast(ch.title != null ? ch.title : "");
+            String plainDescription = stripMarkdownFast(ch.description != null ? ch.description : "");
+            
+            titleView.setText(plainTitle);
+            subtitleView.setText(plainDescription);
             badgeView.setVisibility(View.GONE);
 
             final String chapterId = ch.chapterId;
@@ -504,5 +508,46 @@ public class HomeFragment extends Fragment {
         // Refresh chapters and update UI state
         loadChaptersFromDb();
         updateUIBasedOnVerificationState();
+    }
+
+    /**
+     * Strip common Markdown formatting characters to show plain text.
+     * This removes bold, italic, links, and other markdown syntax.
+     */
+    private static String stripMarkdownFast(String input) {
+        if (input == null) return "";
+        String result = input;
+        
+        // Remove bold: **text** or __text__
+        result = result.replaceAll("\\*\\*([^*]+)\\*\\*", "$1");
+        result = result.replaceAll("__([^_]+)__", "$1");
+        
+        // Remove italic: *text* or _text_
+        result = result.replaceAll("\\*([^*]+)\\*", "$1");
+        result = result.replaceAll("_([^_]+)_", "$1");
+        
+        // Remove strikethrough: ~~text~~
+        result = result.replaceAll("~~([^~]+)~~", "$1");
+        
+        // Remove inline code: `text`
+        result = result.replaceAll("`([^`]+)`", "$1");
+        
+        // Remove links: [text](url)
+        result = result.replaceAll("\\[([^\\]]+)\\]\\([^)]+\\)", "$1");
+        
+        // Remove images: ![alt](url)
+        result = result.replaceAll("!\\[([^\\]]*)\\]\\([^)]+\\)", "$1");
+        
+        // Remove headers: # text
+        result = result.replaceAll("^#{1,6}\\s+", "");
+        result = result.replaceAll("\\n#{1,6}\\s+", "\n");
+        
+        // Remove list markers: - or * or + or 1.
+        result = result.replaceAll("^[\\-\\*\\+]\\s+", "");
+        result = result.replaceAll("\\n[\\-\\*\\+]\\s+", "\n");
+        result = result.replaceAll("^\\d+\\.\\s+", "");
+        result = result.replaceAll("\\n\\d+\\.\\s+", "\n");
+        
+        return result.trim();
     }
 }

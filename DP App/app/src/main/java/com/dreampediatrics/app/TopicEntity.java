@@ -14,6 +14,7 @@
         public String chapterId;
         public int number;
         public String title;
+        public String description;  // Short curated description for card views
         public String content;
         public String images;
 
@@ -21,11 +22,12 @@
         public boolean completed; // true if user has opened/viewed the topic
         public long lastViewed;   // timestamp in millis when last viewed
 
-        public TopicEntity(String topicId, String chapterId, int number, String title, String content, String images, boolean completed, long lastViewed) {
+        public TopicEntity(String topicId, String chapterId, int number, String title, String description, String content, String images, boolean completed, long lastViewed) {
             this.topicId = topicId;
             this.chapterId = chapterId;
             this.number = number;
             this.title = title;
+            this.description = description;
             this.content = content;
             this.images = images;
             this.completed = completed;

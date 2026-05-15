@@ -18,7 +18,7 @@ public interface AppDao {
     @Query("SELECT * FROM chapters ORDER BY number")
     List<ChapterEntity> getAllChapters();
 
-    @Query("SELECT rowid AS rowid, chapterId, title, substr(content, 1, 300) AS snippet, completed FROM topics WHERE chapterId = :chapterId ORDER BY rowid")
+    @Query("SELECT rowid AS rowid, chapterId, title, description, substr(content, 1, 300) AS snippet, completed FROM topics WHERE chapterId = :chapterId ORDER BY rowid")
     List<TopicSummary> getTopicSummariesForChapter(String chapterId);
 
     @Query("SELECT * FROM chapters WHERE chapterId = :chapterId LIMIT 1")

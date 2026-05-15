@@ -137,10 +137,18 @@ public class ChapterActivity extends AppCompatActivity {
 
             titleView.setText(s.title != null ? s.title : "Untitled");
 
-            // Fast strip of HTML tags from snippet (avoids Html.fromHtml on UI thread)
-            String rawSnippet = s.snippet != null ? s.snippet : "";
-            String plain = stripHtmlFast(rawSnippet).trim();
-            subtitleView.setText(makeSnippet(plain));
+            // Use curated description if available, otherwise fall back to snippet
+            String displayText = "";
+            if (s.description != null && !s.description.trim().isEmpty()) {
+                // Use the curated description (already clean, no HTML/Markdown)
+                displayText = s.description;
+            } else {
+                // Fallback to snippet (strip HTML/Markdown from content)
+                String rawSnippet = s.snippet != null ? s.snippet : "";
+                String plain = stripHtmlFast(rawSnippet).trim();
+                displayText = makeSnippet(plain);
+            }
+            subtitleView.setText(displayText);
 
             infoView.setVisibility(View.GONE);
 

@@ -77,6 +77,7 @@ public class TextbookRepository {
                             String topicId = top.optString("id", chapterId + "_t" + (t + 1));
                             int tnum = top.optInt("number", t + 1);
                             String ttitle = top.optString("title", "Topic " + (t + 1));
+                            String tdescription = top.optString("description", ""); // Parse topic description
                             String contentHtml = top.optString("content", "");
                             JSONArray imagesArr = top.optJSONArray("images");
                             String imagesCsv = null;
@@ -88,7 +89,7 @@ public class TextbookRepository {
                                 }
                                 imagesCsv = sb.toString();
                             }
-                            TopicEntity topicEntity = new TopicEntity(topicId, chapterId, tnum, ttitle, contentHtml, imagesCsv, false, 0L);
+                            TopicEntity topicEntity = new TopicEntity(topicId, chapterId, tnum, ttitle, tdescription, contentHtml, imagesCsv, false, 0L);
                             topics.add(topicEntity);
                         }
                     }

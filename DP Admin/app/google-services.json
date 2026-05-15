@@ -1,14 +1,14 @@
 {
   "project_info": {
-    "project_number": "1062937429740",
-    "firebase_url": "https://dreampedi-default-rtdb.firebaseio.com",
-    "project_id": "dreampedi",
-    "storage_bucket": "dreampedi.firebasestorage.app"
+    "project_number": "155491826795",
+    "firebase_url": "https://dream-pedi-default-rtdb.firebaseio.com",
+    "project_id": "dream-pedi",
+    "storage_bucket": "dream-pedi.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1062937429740:android:49c916776ed8f0a82e07c9",
+        "mobilesdk_app_id": "1:155491826795:android:b4d93f36c222db84b3c52e",
         "android_client_info": {
           "package_name": "com.dream.pediadmin"
         }
@@ -16,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBFLcPB6VnwEBZXqelAKBNrcffGwkr-2qI"
+          "current_key": "AIzaSyBvmSHwfKqrTbeZBnjNd4t3kt6X-bnyREY"
         }
       ],
       "services": {
@@ -27,7 +27,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1062937429740:android:ee5a95cf1cc794be2e07c9",
+        "mobilesdk_app_id": "1:155491826795:android:6f7d05d81f0e2fabb3c52e",
         "android_client_info": {
           "package_name": "com.dreampediatrics.app"
         }
@@ -35,7 +35,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBFLcPB6VnwEBZXqelAKBNrcffGwkr-2qI"
+          "current_key": "AIzaSyBvmSHwfKqrTbeZBnjNd4t3kt6X-bnyREY"
         }
       ],
       "services": {
