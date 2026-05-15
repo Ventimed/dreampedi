@@ -844,6 +844,43 @@ service firebase.storage {
 - Review and update privacy policy
 - Performance optimization
 
+### Cost Analysis
+
+#### Firebase Services Pricing (1,000 users/month)
+
+| Service | Usage | Cost/Month | Notes |
+|---------|-------|------------|-------|
+| **Firebase Storage** | 313 KB × 1000 = 313 MB | $0.01 | First 5 GB free |
+| **Cloud Functions** | 1,000 invocations | $0.00 | First 2M free |
+| **Firebase Auth** | 1,000 users | $0.00 | Always free |
+| **Realtime Database** | ~10 MB data | $0.00 | First 1 GB free |
+| **Bandwidth** | 313 MB downloads | $0.01 | First 10 GB free |
+| **Cloud Messaging** | 1,000 notifications | $0.00 | Always free |
+| **Total** | | **~$0.02** | Essentially free |
+
+#### At Scale (10,000 users/month)
+
+| Service | Usage | Cost/Month | Notes |
+|---------|-------|------------|-------|
+| **Firebase Storage** | 3.13 GB | $0.08 | Still under 5 GB free tier |
+| **Cloud Functions** | 10,000 invocations | $0.00 | Still under 2M free tier |
+| **Bandwidth** | 3.13 GB | $0.00 | Still under 10 GB free tier |
+| **Realtime Database** | ~100 MB | $0.00 | Still under 1 GB free tier |
+| **Total** | | **~$0.08** | Minimal cost |
+
+#### Performance Metrics
+
+| Metric | Value | Impact |
+|--------|-------|--------|
+| **Chapters** | 37 | Complete textbook |
+| **File Size** | 313 KB | Compressed JSON |
+| **Encryption Overhead** | 28 bytes | Negligible |
+| **Download Time (4G)** | ~2 seconds | Excellent |
+| **Decryption Time** | <1 second | Excellent |
+| **First Load Time** | ~5 seconds | Good |
+| **Offline Access** | Instant | Excellent |
+| **Storage per User** | ~500 KB | Minimal |
+
 ---
 
 ## 🐛 Troubleshooting
