@@ -40,6 +40,9 @@ public class SettingsFragment extends Fragment {
     private TextView userNameView;
     private TextView userEmailView;
     private TextView userUidView;
+    private TextView chaptersReadCount;
+    private TextView dayStreakCount;
+    private TextView bookmarksCount;
     private SwitchMaterial darkModeSwitch;
     private SwitchMaterial notificationsSwitch;
     private LinearLayout settingsContainer;
@@ -54,7 +57,7 @@ public class SettingsFragment extends Fragment {
 
         initializeViews(view);
         setupUserProfileFromPrefs();
-        setupSettingsHandlers();
+        setupSettingsHandlers(view);
 
         return view;
     }
@@ -95,6 +98,9 @@ public class SettingsFragment extends Fragment {
             userEmailView.setText(prefs.getString("email", "No email"));
             userUidView.setText(prefs.getString("uid", "No UID"));
         }
+
+        // Update stats
+        updateStats();
 
         // Badge visibility for features unlocked flag
         boolean featuresUnlocked = prefs.getBoolean("features_unlocked", false);
@@ -170,42 +176,63 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    private void setupSettingsHandlers() {
+    private void updateStats() {
+        MainActivity main = (MainActivity) requireActivity();
+        if (main == null) return;
+
+        // Get chapters read count
+        int chaptersRead = prefs.getInt("chapters_read_count", 0);
+        if (chaptersReadCount != null) {
+            chaptersReadCount.setText(String.valueOf(chaptersRead));
+        }
+
+        // Get day streak
+        int dayStreak = prefs.getInt("day_streak", 0);
+        if (dayStreakCount != null) {
+            dayStreakCount.setText(String.valueOf(dayStreak));
+        }
+
+        // Get bookmarks count
+        int bookmarks = prefs.getInt("bookmarks_count", 0);
+        if (bookmarksCount != null) {
+            bookmarksCount.setText(String.valueOf(bookmarks));
+        }
+    }
+
+    private void setupSettingsHandlers(View view) {
         MainActivity main = (MainActivity) getActivity();
         if (main == null) return;
 
         // Edit profile: open dialog, save plain name to prefs, update UI & MainActivity
-        View editProfileItem = settingsContainer.findViewById(R.id.editProfileItem);
-        editProfileItem.setOnClickListener(v -> {
-            final EditText input = new EditText(requireContext());
-            String currentPlain = prefs.getString("username", main.getUserSettings().getUsername());
-            input.setText(currentPlain);
+        View editProfileItem = view.findViewById(R.id.editProfileItem);
+        if (editProfileItem != null) {
+            editProfileItem.setOnClickListener(v -> {
+                final EditText input = new EditText(requireContext());
+                String currentPlain = prefs.getString("username", main.getUserSettings().getUsername());
+                input.setText(currentPlain);
 
-            new MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Edit Username")
-                    .setView(input)
-                    .setPositiveButton("Save", (dialog, which) -> {
-                        String newPlain = input.getText().toString().trim();
-                        if (!TextUtils.isEmpty(newPlain)) {
-                            // save plain name (no auto "Dr." prefix stored)
-                            prefs.edit().putString("username", newPlain).apply();
-                            // update UI display with "Dr. " prefix
-                            String display = newPlain;
-                            if (!display.toUpperCase().startsWith("dr.")) display = "Dr. " + display;
-                            userNameView.setText(display);
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Edit Username")
+                        .setView(input)
+                        .setPositiveButton("Save", (dialog, which) -> {
+                            String newPlain = input.getText().toString().trim();
+                            if (!TextUtils.isEmpty(newPlain)) {
+                                // save plain name (no auto "Dr." prefix stored)
+                                prefs.edit().putString("username", newPlain).apply();
+                                // update UI display with "Dr. " prefix
+                                String display = newPlain;
+                                if (!display.toUpperCase().startsWith("dr.")) display = "Dr. " + display;
+                                userNameView.setText(display);
 
-                            // notify MainActivity to update stored in-memory name + toolbar initial + home greeting
-                            main.updateGreeting(newPlain);
-                        }
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
-        });
+                                // notify MainActivity to update stored in-memory name + toolbar initial + home greeting
+                                main.updateGreeting(newPlain);
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            });
+        }
 
-        // ✅ FIXED: Replace the dark mode switch handler in setupSettingsHandlers():
-        // Find this part in setupSettingsHandlers() method and replace it:
-
-        // Dark mode toggle -> save to prefs and apply theme
         // Dark mode toggle -> animate icon smoothly, swap icon at midpoint, then apply theme change
         darkModeSwitch.setOnCheckedChangeListener((btn, isChecked) -> {
             // Save preference immediately so state persists across restarts/crashes
@@ -305,21 +332,24 @@ public class SettingsFragment extends Fragment {
             rot.start();
         });
 
-
         // Notifications toggle -> store and delegate notification behavior if needed
         notificationsSwitch.setOnCheckedChangeListener((btn, isChecked) -> {
             prefs.edit().putBoolean("notifications", isChecked).apply();
             main.toggleNotifications();
         });
 
-        // about / logout etc - call main directly
-        settingsContainer.findViewById(R.id.aboutItem).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), AboutActivity.class);
-                view.getContext().startActivity(intent);
-            }
-        });
+        // About item
+        View aboutItem = settingsContainer.findViewById(R.id.aboutItem);
+        if (aboutItem != null) {
+            aboutItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(view.getContext(), AboutActivity.class);
+                    view.getContext().startActivity(intent);
+                }
+            });
+        }
+
     }
 
 

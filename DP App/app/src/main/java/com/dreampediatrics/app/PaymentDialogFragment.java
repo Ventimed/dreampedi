@@ -428,17 +428,9 @@ public class PaymentDialogFragment extends DialogFragment {
                     SharedPreferences prefs = requireContext().getSharedPreferences("DreamPediatricsPrefs", 0);
                     prefs.edit().putBoolean("payment_submitted", true).apply();
 
-                    // Update MainActivity purchase button
-                    MainActivity mainActivity = (MainActivity) getActivity();
-                    if (mainActivity != null) {
-                        mainActivity.runOnUiThread(() -> {
-                            MaterialButton purchaseButton = mainActivity.findViewById(R.id.btnPurchaseCard);
-                            if (purchaseButton != null) {
-                                purchaseButton.setText("Pending");
-                                purchaseButton.setEnabled(false);
-                            }
-                        });
-                    }
+                    // Update HomeFragment subscribe button
+                    // The HomeFragment will be notified via SharedPreferences change
+                    // and will update its UI in onResume
 
                     showPaymentReceived(pleaseWait, thankYou);
                 })

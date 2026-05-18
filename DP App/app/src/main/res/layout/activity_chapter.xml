@@ -2,56 +2,117 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/surface">
 
-    <!-- Toolbar -->
+    <!-- Toolbar with custom layout -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:background="@color/toolbar_bg"
-        app:elevation="4dp">
+        android:background="@color/primary"
+        app:elevation="0dp">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            android:contentInsetStart="16dp"
-            android:contentInsetEnd="16dp"
-            android:background="@color/toolbar_bg"
-            app:titleTextAppearance="@style/BoldToolbarTitle">
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:background="@color/primary">
 
-        </androidx.appcompat.widget.Toolbar>
+            <!-- Back Button -->
+            <ImageView
+                android:id="@+id/backButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_back_arrow"
+                android:background="@drawable/bg_back_button"
+                android:padding="10dp"
+                android:contentDescription="Back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:tint="@color/on_primary" />
+
+            <!-- Chapter Title (Two Lines) -->
+            <TextView
+                android:id="@+id/chapterTitleText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Common Pediatric\nProcedures"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/on_primary"
+                android:lineHeight="28sp"
+                android:layout_marginStart="16dp"
+                app:layout_constraintStart_toEndOf="@id/backButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Chapter progress below toolbar -->
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/chapterProgressBar"
+    <!-- Chapter Stats Header -->
+    <LinearLayout
+        android:id="@+id/chapterStatsHeader"
         android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:indeterminate="false"
-        android:max="100"
-        android:layout_marginBottom="8dp"
-        app:indicatorColor="@color/navText"
-        app:trackColor="@color/outline_variant" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp"
+        android:gravity="center_vertical"
+        android:background="@color/surface"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <TextView
+            android:id="@+id/chapterCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="13 chapters"
+            android:textSize="16sp"
+            android:textColor="@color/on_surface"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/chapterProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1 of 13 done"
+            android:textSize="14sp"
+            android:textColor="@color/on_surface"
+            android:background="@drawable/bg_chapter_progress_badge"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="8dp" />
+    </LinearLayout>
 
     <!-- Content scroll area -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/chapterScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:padding="16dp"
-        android:clipToPadding="false">
+        android:layout_marginTop="56dp"
+        android:clipToPadding="false"
+        android:background="@color/surface"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <LinearLayout
-        android:id="@+id/topicsContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
-</androidx.core.widget.NestedScrollView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <!-- Topics Container -->
+            <LinearLayout
+                android:id="@+id/topicsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="16dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

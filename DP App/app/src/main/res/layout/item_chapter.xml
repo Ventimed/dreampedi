@@ -3,11 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
+    android:layout_marginBottom="10dp"
     android:layout_marginHorizontal="16dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    android:foreground="?android:attr/selectableItemBackground"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="1dp"
+    app:strokeWidth="10dp"
+    app:strokeColor="@color/outline"
     android:clickable="true"
     android:focusable="true">
 
@@ -15,93 +16,106 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp"
-        android:background="?attr/colorSurfaceVariant">
+        android:padding="18dp"
+        android:background="@color/surface_variant">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:id="@+id/chapterTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/badge"
-                android:text="Chapter Title"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface"
-                android:lineHeight="24sp" />
-
-            <TextView
-                android:id="@+id/badge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/ic_launcher_background"
-                android:text="Updated"
-                android:textColor="@color/on_primary"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:visibility="gone" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/chapterSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Chapter Subtitle"
-            android:textSize="16sp"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:layout_marginBottom="8dp"
-            android:lineHeight="22sp" />
-
+        <!-- Card Top Section with Icon, Title, and Badge -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="14dp">
 
-            <View
-                android:layout_width="6dp"
-                android:layout_height="6dp"
-                android:background="@drawable/dot_indicator"
-                android:layout_marginEnd="12dp" />
+            <!-- Chapter Icon -->
+            <FrameLayout
+                android:id="@+id/chapterIconContainer"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_chapter_icon_amber"
+                android:layout_marginEnd="14dp">
 
+                <ImageView
+                    android:id="@+id/chapterIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_chapter_default"
+                    android:contentDescription="Chapter icon" />
+            </FrameLayout>
+
+            <!-- Title and Description -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/chapterTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chapter Title"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/on_surface"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:id="@+id/chapterSubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Chapter Subtitle"
+                    android:textSize="14sp"
+                    android:textColor="@color/on_surface_variant"
+                    android:lineHeight="20sp" />
+            </LinearLayout>
+
+            <!-- Badge -->
             <TextView
-                android:id="@+id/chapterInfo"
+                android:id="@+id/badge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5 Sections • 45 Minutes Reading Time"
-                android:textSize="14sp"
-                android:textColor="?attr/colorOnSurfaceVariant" />
-
+                android:background="@drawable/bg_badge_warn"
+                android:text="8%"
+                android:textColor="@color/badge_warn_fg"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:layout_marginStart="8dp" />
         </LinearLayout>
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progressBar"
+        <!-- Progress Row -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:indicatorColor="@color/primary"
-            app:trackColor="@color/outline_variant"
-            app:trackCornerRadius="2dp"
-            android:max="100" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressBar"
+                android:layout_width="0dp"
+                android:layout_height="6dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"
+                app:indicatorColor="@color/progress_fill"
+                app:trackColor="@color/progress_track"
+                app:trackCornerRadius="3dp"
+                app:trackThickness="6dp"
+                android:max="100" />
+
+            <TextView
+                android:id="@+id/progressText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 / 24"
+                android:textSize="13sp"
+                android:textColor="@color/on_surface_variant"
+                android:minWidth="40dp"
+                android:gravity="end" />
+        </LinearLayout>
 
     </LinearLayout>
-
-    <!-- Left border indicator -->
-    <View
-        android:layout_width="4dp"
-        android:layout_height="match_parent"
-        android:background="@color/primary"
-        android:alpha="0" />
 
 </androidx.cardview.widget.CardView>

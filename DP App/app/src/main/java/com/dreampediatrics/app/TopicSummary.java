@@ -7,6 +7,7 @@ package com.dreampediatrics.app;
 public class TopicSummary {
     public long rowid;         // maps to sqlite rowid
     public String chapterId;
+    public int number;         // topic number (global across all chapters)
     public String title;
     public String description; // Short curated description for card views
     public String snippet;     // substring(content,1,300) returned by query (fallback)

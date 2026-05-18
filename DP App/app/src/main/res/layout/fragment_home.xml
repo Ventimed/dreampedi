@@ -3,31 +3,61 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:background="@color/surface">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Payment card placed below the toolbar -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/payment_card"
+        <!-- Greeting Section with Subscribe Card / Goal Pill -->
+        <LinearLayout
+            android:id="@+id/greetingSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="24dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="6dp"
-            app:strokeWidth="0dp"
-            app:cardUseCompatPadding="true">
+            android:orientation="vertical"
+            android:background="@color/primary"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="22dp">
 
+            <TextView
+                android:id="@+id/greetingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Good afternoon,\nDr. Nati"
+                android:textColor="@color/on_primary_dark"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:lineHeight="28sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/greetingTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ready for today's session?"
+                android:textColor="@color/on_primary"
+                android:textSize="14sp"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Subscribe Card (shown when not verified) -->
             <LinearLayout
+                android:id="@+id/subscribeCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:background="@drawable/bg_goal_pill"
+                android:padding="16dp"
                 android:gravity="center_vertical"
-                android:padding="16dp">
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_crown"
+                    android:tint="@color/on_primary_dark"
+                    android:layout_marginEnd="12dp" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -36,150 +66,224 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvPriceLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="One-time"
-                        android:textSize="12sp"
-                        android:textStyle="normal"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:text="Unlock full access"
+                        android:textSize="13sp"
+                        android:textColor="@color/on_primary_dark"
+                        android:alpha="0.7" />
 
                     <TextView
-                        android:id="@+id/priceCard"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="300Br"
-                        android:textSize="24sp"
+                        android:text="Subscribe to all chapters"
+                        android:textSize="16sp"
                         android:textStyle="bold"
-                        android:layout_marginTop="6dp"
-                        android:textColor="?attr/colorOnSurface" />
-
-                    <TextView
-                        android:id="@+id/tvPriceSubtitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Access the book content"
-                        android:textSize="12sp"
-                        android:layout_marginTop="6dp"
-                        android:textColor="?attr/colorOnSurface"/>
-
-                    <com.google.android.material.progressindicator.LinearProgressIndicator
-                        android:id="@+id/downloadProgress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:indeterminate="false"
-                        android:backgroundTint="@color/on_primary"
-                        android:layout_margin="4dp"
-                        android:visibility="gone"
-                        android:background="#000000"/>
+                        android:textColor="@color/on_primary_dark"
+                        android:layout_marginTop="2dp" />
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnPurchaseCard"
+                    android:id="@+id/btnSubscribe"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Purchase"
-                    android:visibility="gone"
-                    android:backgroundTint="@color/primary"
-                    android:textColor="@color/on_primary"
-                    app:cornerRadius="12dp"/>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/downloadButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Download"
-                    android:visibility="gone"
-                    android:backgroundTint="@color/primary"
-                    android:textColor="@color/on_primary"
-                    app:cornerRadius="12dp" />
+                    android:text="Subscribe"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:backgroundTint="#FFFFFF"
+                    android:textColor="@color/on_primary_dark"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    app:cornerRadius="10dp"
+                    android:elevation="0dp"
+                    app:elevation="0dp" />
             </LinearLayout>
 
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/greetingCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginVertical="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            app:cardBackgroundColor="@color/primary">
-
+            <!-- Download Card (shown when verified but not downloaded) -->
             <LinearLayout
+                android:id="@+id/downloadCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:background="@drawable/bg_goal_pill"
+                android:padding="16dp"
+                android:visibility="gone">
 
-                <TextView
-                    android:id="@+id/greetingText"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Hi, Dr. Sarah Johnson"
-                    android:textColor="@color/on_primary"
-                    android:textStyle="bold"
-                    android:textAllCaps="true"
-                    android:textSize="18sp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/greetingTimeText"
-                    android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_download"
+                        android:tint="@color/on_primary_dark"
+                        android:layout_marginEnd="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ready to download"
+                            android:textSize="13sp"
+                            android:textColor="@color/on_primary_dark"
+                            android:alpha="0.7" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Download textbook content"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_primary_dark"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnDownload"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Download"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:backgroundTint="#FFFFFF"
+                        android:textColor="@color/on_primary_dark"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        app:cornerRadius="10dp"
+                        android:elevation="0dp"
+                        app:elevation="0dp" />
+                </LinearLayout>
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/downloadProgressBar"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Good morning"
-                    android:textColor="@color/on_primary"
-                    android:textSize="14sp" />
-
+                    android:indeterminate="false"
+                    android:layout_marginTop="12dp"
+                    android:visibility="gone"
+                    app:indicatorColor="@color/on_primary_dark"
+                    app:trackColor="@color/goal_pill_bg_alpha" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-        <!-- Section Header -->
+
+            <!-- Goal Pill (Streak Card - shown when verified and downloaded) -->
+            <LinearLayout
+                android:id="@+id/streakCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_goal_pill"
+                android:padding="10dp"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_fire"
+                    android:layout_marginEnd="10dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Today's reading goal"
+                        android:textSize="13sp"
+                        android:textColor="@color/on_primary" />
+
+                    <TextView
+                        android:id="@+id/goalValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2 of 3 topics done"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/on_primary_container"
+                        android:layout_marginTop="1dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/goalStreak"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🔥 5-day streak"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/on_primary_dark"
+                    android:background="@drawable/bg_goal_streak"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+        <!-- Section Header with Continue Reading Button -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginHorizontal="24dp"
-            android:paddingHorizontal="16dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="14dp"
+            android:layout_marginHorizontal="16dp"
             android:gravity="center_vertical"
-            android:background="@drawable/section_header_background"
-            android:orientation="horizontal"
-            android:elevation="2dp">
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Chapters"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:layout_weight="1"
-                android:textColor="#000000" />
+                android:textColor="@color/on_surface" />
 
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
                 android:id="@+id/btnContinue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="6dp"
-                android:gravity="center"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="?attr/colorPrimaryVariant"
+                android:background="@drawable/bg_continue_button"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="▶"
+                    android:textSize="12sp"
+                    android:textColor="@color/on_surface"
+                    android:layout_marginEnd="5dp" />
 
                 <TextView
                     android:id="@+id/chipText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Continue Reading"
-                    android:paddingTop="6dp"
+                    android:text="Continue reading"
+                    android:textSize="15sp"
                     android:textStyle="bold"
-                    android:paddingBottom="6dp"
-                    android:textSize="14sp"
-                    android:textColor="?attr/colorOnSurface" />
-            </com.google.android.material.card.MaterialCardView>
+                    android:textColor="@color/on_surface" />
+            </LinearLayout>
         </LinearLayout>
         <!-- Chapters Container -->
         <LinearLayout

@@ -18,7 +18,7 @@ public interface AppDao {
     @Query("SELECT * FROM chapters ORDER BY number")
     List<ChapterEntity> getAllChapters();
 
-    @Query("SELECT rowid AS rowid, chapterId, title, description, substr(content, 1, 300) AS snippet, completed FROM topics WHERE chapterId = :chapterId ORDER BY rowid")
+    @Query("SELECT rowid AS rowid, chapterId, number, title, description, substr(content, 1, 300) AS snippet, completed FROM topics WHERE chapterId = :chapterId ORDER BY number")
     List<TopicSummary> getTopicSummariesForChapter(String chapterId);
 
     @Query("SELECT * FROM chapters WHERE chapterId = :chapterId LIMIT 1")
@@ -97,4 +97,16 @@ public interface AppDao {
 
     @Query("DELETE FROM history")
     void deleteAllHistory();
+
+    // --- Overall Progress (across all chapters) ---
+    @Query("SELECT COUNT(*) FROM topics")
+    int getTotalTopicCount();
+
+    @Query("SELECT COUNT(*) FROM topics WHERE completed = 1")
+    int getTotalCompletedCount();
+
+    // --- Streak Tracking ---
+    // Get all distinct dates when topics were completed (for streak calculation)
+    @Query("SELECT DISTINCT date(lastViewed / 1000, 'unixepoch', 'localtime') as date FROM topics WHERE completed = 1 AND lastViewed > 0 ORDER BY date DESC")
+    List<String> getCompletedDates();
 }

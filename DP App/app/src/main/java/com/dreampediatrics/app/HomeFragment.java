@@ -12,6 +12,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -43,9 +45,11 @@ public class HomeFragment extends Fragment {
     private LinearLayout chaptersContainer;
     private TextView greetingText;
     private TextView greetingTimeText;
-    private MaterialCardView btnContinue, paymentCard;
-    private MaterialButton btnPurchaseCard, downloadButton;
-    private ProgressBar downloadProgress;
+    private LinearLayout btnContinue;
+    private LinearLayout subscribeCard, downloadCard, streakCard;
+    private MaterialButton btnSubscribe, btnDownload;
+    private LinearProgressIndicator downloadProgressBar;
+    private TextView goalValue, goalStreak;
 
     private final Executor io = Executors.newSingleThreadExecutor();
     private List<ChapterEntity> chapters = new ArrayList<>();
@@ -57,22 +61,29 @@ public class HomeFragment extends Fragment {
         greetingText = view.findViewById(R.id.greetingText);
         greetingTimeText = view.findViewById(R.id.greetingTimeText);
         btnContinue = view.findViewById(R.id.btnContinue);
-        downloadProgress = view.findViewById(R.id.downloadProgress);
-        downloadButton = view.findViewById(R.id.downloadButton);
-        btnPurchaseCard = view.findViewById(R.id.btnPurchaseCard);
-        paymentCard = view.findViewById(R.id.payment_card);
+        
+        // Initialize new card views
+        subscribeCard = view.findViewById(R.id.subscribeCard);
+        downloadCard = view.findViewById(R.id.downloadCard);
+        streakCard = view.findViewById(R.id.streakCard);
+        btnSubscribe = view.findViewById(R.id.btnSubscribe);
+        btnDownload = view.findViewById(R.id.btnDownload);
+        downloadProgressBar = view.findViewById(R.id.downloadProgressBar);
+        goalValue = view.findViewById(R.id.goalValue);
+        goalStreak = view.findViewById(R.id.goalStreak);
 
         // load chapters & progress from DB
         loadChaptersFromDb();
 
-        // --- Payment card purchase button wiring ---
-        btnPurchaseCard.setOnClickListener(v -> {
+        // --- Subscribe button wiring ---
+        btnSubscribe.setOnClickListener(v -> {
             if (!isAdded()) return;
-            PaymentDialogFragment dialog = new PaymentDialogFragment();
-            dialog.show(getParentFragmentManager(), "payment_dialog");
+            PaymentBottomSheet bottomSheet = new PaymentBottomSheet();
+            bottomSheet.show(getParentFragmentManager(), "payment_bottom_sheet");
         });
 
-        downloadButton.setOnClickListener(v -> {
+        // --- Download button wiring ---
+        btnDownload.setOnClickListener(v -> {
             startTextbookDownload();
         });
 
@@ -103,7 +114,8 @@ public class HomeFragment extends Fragment {
 
     /**
      * OPTIMIZED: Update UI based on current account verification state
-     * Fixed logic: Payment card stays visible until Room DB is populated
+     * Shows subscribe card when not verified, download card when verified but not downloaded,
+     * and streak card when content is available
      */
     public void updateUIBasedOnVerificationState() {
         Context ctx = getContext();
@@ -125,47 +137,50 @@ public class HomeFragment extends Fragment {
 
             if (isAdded()) {
                 requireActivity().runOnUiThread(() -> {
-                    updatePaymentCardAndButtonsVisibility(featuresUnlocked, paymentSubmitted, finalRoomHasContent);
+                    updateCardVisibility(featuresUnlocked, paymentSubmitted, finalRoomHasContent);
                 });
             }
         });
     }
 
     /**
-     * OPTIMIZED: Centralized UI control for payment card and buttons
-     * FIXED: Properly handle transition from pending to download when server unlocks features
+     * OPTIMIZED: Centralized UI control for card visibility
+     * Shows one of three cards: subscribe, download, or streak
      */
-    private void updatePaymentCardAndButtonsVisibility(boolean featuresUnlocked, boolean paymentSubmitted, boolean roomHasContent) {
-        if (paymentCard == null || btnPurchaseCard == null || downloadButton == null) return;
+    private void updateCardVisibility(boolean featuresUnlocked, boolean paymentSubmitted, boolean roomHasContent) {
+        if (subscribeCard == null || downloadCard == null || streakCard == null) return;
 
         if (roomHasContent) {
-            // Room DB has content - hide payment card completely
-            paymentCard.setVisibility(View.GONE);
-            downloadButton.setVisibility(View.GONE);
+            // Room DB has content - show streak card
+            subscribeCard.setVisibility(View.GONE);
+            downloadCard.setVisibility(View.GONE);
+            streakCard.setVisibility(View.VISIBLE);
+        } else if (featuresUnlocked) {
+            // Features unlocked but no content - show download card
+            subscribeCard.setVisibility(View.GONE);
+            downloadCard.setVisibility(View.VISIBLE);
+            streakCard.setVisibility(View.GONE);
+            
+            // Reset button state
+            btnDownload.setEnabled(true);
+            btnDownload.setText("Download");
+            downloadProgressBar.setVisibility(View.GONE);
+
+            // FIXED: Reset purchase button state when features unlock
+            SharedPreferences prefs = requireContext().getSharedPreferences("DreamPediatricsPrefs", Context.MODE_PRIVATE);
+            prefs.edit().putBoolean("payment_submitted", false).apply();
         } else {
-            // Room DB is empty - show payment card
-            paymentCard.setVisibility(View.VISIBLE);
+            // Features locked - show subscribe card
+            subscribeCard.setVisibility(View.VISIBLE);
+            downloadCard.setVisibility(View.GONE);
+            streakCard.setVisibility(View.GONE);
 
-            if (featuresUnlocked) {
-                // Features unlocked - show download button, hide purchase button
-                btnPurchaseCard.setVisibility(View.GONE);
-                downloadButton.setVisibility(View.VISIBLE);
-
-                // FIXED: Reset purchase button state when features unlock
-                SharedPreferences prefs = requireContext().getSharedPreferences("DreamPediatricsPrefs", Context.MODE_PRIVATE);
-                prefs.edit().putBoolean("payment_submitted", false).apply();
+            if (paymentSubmitted) {
+                btnSubscribe.setText("Pending");
+                btnSubscribe.setEnabled(false);
             } else {
-                // Features locked - show purchase button based on payment state, hide download
-                downloadButton.setVisibility(View.GONE);
-                btnPurchaseCard.setVisibility(View.VISIBLE);
-
-                if (paymentSubmitted) {
-                    btnPurchaseCard.setText("Pending");
-                    btnPurchaseCard.setEnabled(false);
-                } else {
-                    btnPurchaseCard.setText("Purchase");
-                    btnPurchaseCard.setEnabled(true);
-                }
+                btnSubscribe.setText("Subscribe");
+                btnSubscribe.setEnabled(true);
             }
         }
     }
@@ -220,10 +235,10 @@ public class HomeFragment extends Fragment {
      * Called after purchase submit to set UI to pending.
      */
     public void onPurchaseSubmitted() {
-        if (btnPurchaseCard == null) return;
+        if (btnSubscribe == null) return;
 
-        btnPurchaseCard.setText("Pending");
-        btnPurchaseCard.setEnabled(false);
+        btnSubscribe.setText("Pending");
+        btnSubscribe.setEnabled(false);
 
         SharedPreferences prefs = requireContext().getSharedPreferences("DreamPediatricsPrefs", Context.MODE_PRIVATE);
         prefs.edit().putBoolean("payment_submitted", true).apply();
@@ -257,14 +272,19 @@ public class HomeFragment extends Fragment {
         chaptersContainer.removeAllViews();
         LayoutInflater inflater = getLayoutInflater();
 
+        // Update goal pill with actual data
+        updateGoalPill();
+
         for (ChapterEntity ch : chapters) {
             View chapterView = inflater.inflate(R.layout.item_chapter, chaptersContainer, false);
 
             TextView titleView = chapterView.findViewById(R.id.chapterTitle);
             TextView subtitleView = chapterView.findViewById(R.id.chapterSubtitle);
-            TextView infoView = chapterView.findViewById(R.id.chapterInfo);
             LinearProgressIndicator progressBar = chapterView.findViewById(R.id.progressBar);
+            TextView progressText = chapterView.findViewById(R.id.progressText);
             TextView badgeView = chapterView.findViewById(R.id.badge);
+            ImageView chapterIcon = chapterView.findViewById(R.id.chapterIcon);
+            FrameLayout chapterIconContainer = chapterView.findViewById(R.id.chapterIconContainer);
             androidx.cardview.widget.CardView cardView = (androidx.cardview.widget.CardView) chapterView;
 
             // Strip markdown formatting from title and description
@@ -273,11 +293,16 @@ public class HomeFragment extends Fragment {
             
             titleView.setText(plainTitle);
             subtitleView.setText(plainDescription);
-            badgeView.setVisibility(View.GONE);
+            
+            // Set chapter icon (use default for now, can be customized per chapter)
+            chapterIcon.setImageResource(R.drawable.ic_chapter_default);
+            
+            badgeView.setVisibility(View.VISIBLE);
+            badgeView.setText("8%");
 
             final String chapterId = ch.chapterId;
             progressBar.setProgress(0);
-            infoView.setText("Loading...");
+            progressText.setText("0 / 0");
 
             io.execute(() -> {
                 if (!isAdded()) return;
@@ -295,9 +320,18 @@ public class HomeFragment extends Fragment {
                 if (isAdded()) {
                     requireActivity().runOnUiThread(() -> {
                         progressBar.setProgress(finalPercent);
-                        infoView.setText(
-                                finalCompleted + " of " + finalTotal + " Topics    •    " + finalPercent + "% Complete"
-                        );
+                        progressText.setText(finalCompleted + " / " + finalTotal);
+                        
+                        // Update badge based on completion
+                        if (finalPercent == 100) {
+                            badgeView.setText("Done");
+                            badgeView.setBackground(getResources().getDrawable(R.drawable.bg_badge_done));
+                            badgeView.setTextColor(getResources().getColor(R.color.badge_done_fg));
+                        } else {
+                            badgeView.setText(finalPercent + "%");
+                            badgeView.setBackground(getResources().getDrawable(R.drawable.bg_badge_warn));
+                            badgeView.setTextColor(getResources().getColor(R.color.badge_warn_fg));
+                        }
                     });
                 }
             });
@@ -372,6 +406,102 @@ public class HomeFragment extends Fragment {
 
         // Update UI based on current verification state
         updateUIBasedOnVerificationState();
+        
+        // Update goal pill with latest data
+        updateGoalPill();
+    }
+
+    /**
+     * Update the goal pill with actual streak and topic completion data
+     */
+    private void updateGoalPill() {
+        Context ctx = getContext();
+        if (ctx == null || goalValue == null || goalStreak == null) return;
+
+        io.execute(() -> {
+            if (!isAdded()) return;
+
+            AppDao dao = AppDatabase.getInstance(ctx).appDao();
+            
+            // Get total topics and completed topics across all chapters
+            int totalTopics = dao.getTotalTopicCount();
+            int completedTopics = dao.getTotalCompletedCount();
+            
+            // Calculate streak
+            int streak = calculateStreak(dao);
+
+            if (isAdded()) {
+                requireActivity().runOnUiThread(() -> {
+                    // Update goal value
+                    if (totalTopics > 0) {
+                        goalValue.setText(completedTopics + " of " + totalTopics + " topics done");
+                    } else {
+                        goalValue.setText("No topics available");
+                    }
+
+                    // Update streak
+                    if (streak > 0) {
+                        goalStreak.setText("🔥 " + streak + "-day streak");
+                    } else {
+                        goalStreak.setText("Start your streak!");
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Calculate the current reading streak based on completed topics
+     * A streak is maintained if the user completes at least one topic per day
+     */
+    private int calculateStreak(AppDao dao) {
+        try {
+            List<String> completedDates = dao.getCompletedDates();
+            if (completedDates == null || completedDates.isEmpty()) {
+                return 0;
+            }
+
+            // Get today's date in the same format
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
+            String today = sdf.format(new java.util.Date());
+
+            int streak = 0;
+            String expectedDate = today;
+
+            // Check if user completed something today or yesterday (to allow for late night reading)
+            if (!completedDates.contains(today)) {
+                // Check yesterday
+                java.util.Calendar cal = java.util.Calendar.getInstance();
+                cal.add(java.util.Calendar.DAY_OF_YEAR, -1);
+                String yesterday = sdf.format(cal.getTime());
+                
+                if (!completedDates.contains(yesterday)) {
+                    // No activity today or yesterday, streak is broken
+                    return 0;
+                }
+                expectedDate = yesterday;
+            }
+
+            // Count consecutive days
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            for (String date : completedDates) {
+                if (date.equals(expectedDate)) {
+                    streak++;
+                    // Move to previous day
+                    cal.setTime(sdf.parse(expectedDate));
+                    cal.add(java.util.Calendar.DAY_OF_YEAR, -1);
+                    expectedDate = sdf.format(cal.getTime());
+                } else {
+                    // Gap in streak, stop counting
+                    break;
+                }
+            }
+
+            return streak;
+        } catch (Exception e) {
+            android.util.Log.e("HomeFragment", "Error calculating streak", e);
+            return 0;
+        }
     }
 
     /**
@@ -393,20 +523,23 @@ public class HomeFragment extends Fragment {
             displayName = "Dr. " + displayName;
         }
 
-        if (greetingText != null) greetingText.setText("Hi, " + displayName);
-
         // Time-based greeting
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         String timeGreeting;
+        String greetingPrefix;
         if (hour < 12) {
             timeGreeting = "Good morning";
+            greetingPrefix = "Good morning,";
         } else if (hour < 17) {
             timeGreeting = "Good afternoon";
+            greetingPrefix = "Good afternoon,";
         } else {
             timeGreeting = "Good evening";
+            greetingPrefix = "Good evening,";
         }
 
-        if (greetingTimeText != null) greetingTimeText.setText(timeGreeting);
+        if (greetingText != null) greetingText.setText(greetingPrefix + "\n" + displayName);
+        if (greetingTimeText != null) greetingTimeText.setText("Ready for today's session?");
     }
 
     /**
@@ -420,8 +553,8 @@ public class HomeFragment extends Fragment {
         if (main == null) return;
 
         // First check server status before attempting download
-        downloadButton.setEnabled(false);
-        downloadButton.setText("Checking...");
+        btnDownload.setEnabled(false);
+        btnDownload.setText("Checking...");
 
         checkServerFeatureStatus(new OnServerStatusChecked() {
             @Override
@@ -433,12 +566,12 @@ public class HomeFragment extends Fragment {
                     proceedWithDownload(ctx, main);
                 } else {
                     // Features still locked on server - show error and reset button
-                    downloadButton.setEnabled(true);
-                    downloadButton.setText("Download");
+                    btnDownload.setEnabled(true);
+                    btnDownload.setText("Download");
 
                     Toast.makeText(ctx, "Please purchase the book to download resources", Toast.LENGTH_LONG).show();
 
-                    // Update UI to show purchase button instead
+                    // Update UI to show subscribe card instead
                     updateUIBasedOnVerificationState();
                 }
             }
@@ -450,10 +583,10 @@ public class HomeFragment extends Fragment {
      */
     private void proceedWithDownload(Context ctx, MainActivity main) {
         // Show download progress UI
-        downloadButton.setEnabled(false);
-        downloadButton.setText("Downloading...");
-        downloadProgress.setVisibility(View.VISIBLE);
-        downloadProgress.setProgress(0);
+        btnDownload.setEnabled(false);
+        btnDownload.setText("Downloading...");
+        downloadProgressBar.setVisibility(View.VISIBLE);
+        downloadProgressBar.setProgress(0);
 
         // Firebase Storage reference - explicitly use dream-pedi bucket
         com.google.firebase.storage.FirebaseStorage storage = com.google.firebase.storage.FirebaseStorage.getInstance("gs://dream-pedi");
@@ -468,12 +601,12 @@ public class HomeFragment extends Fragment {
                 .addOnProgressListener(snapshot -> {
                     double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
                     int p = (int) progress;
-                    downloadProgress.setProgress(p);
-                    downloadButton.setText("Downloading... " + p + "%");
+                    downloadProgressBar.setProgress(p);
+                    btnDownload.setText("Downloading... " + p + "%");
                 })
                 .addOnSuccessListener(taskSnapshot -> {
-                    downloadProgress.setProgress(100);
-                    downloadButton.setText("Processing...");
+                    downloadProgressBar.setProgress(100);
+                    btnDownload.setText("Processing...");
 
                     Toast.makeText(ctx, "Download completed, installing textbook...", Toast.LENGTH_SHORT).show();
 
@@ -482,9 +615,9 @@ public class HomeFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> {
                     // Reset UI on failure
-                    downloadProgress.setVisibility(View.GONE);
-                    downloadButton.setEnabled(true);
-                    downloadButton.setText("Download");
+                    downloadProgressBar.setVisibility(View.GONE);
+                    btnDownload.setEnabled(true);
+                    btnDownload.setText("Download");
 
                     String errorMsg = e.getMessage() != null ? e.getMessage() : "Unknown error";
                     Toast.makeText(ctx, "Download failed: " + errorMsg, Toast.LENGTH_LONG).show();
@@ -497,12 +630,10 @@ public class HomeFragment extends Fragment {
      * Resets download UI and triggers UI state update
      */
     public void onTextbookInstalled() {
-        downloadProgress.setVisibility(View.GONE);
-        paymentCard.setVisibility(View.GONE);
-        if (downloadButton != null) {
-            downloadButton.setEnabled(true);
-            downloadButton.setText("Download");
-
+        downloadProgressBar.setVisibility(View.GONE);
+        if (btnDownload != null) {
+            btnDownload.setEnabled(true);
+            btnDownload.setText("Download");
         }
 
         // Refresh chapters and update UI state

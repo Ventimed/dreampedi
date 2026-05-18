@@ -1,7 +1,6 @@
 package com.dreampediatrics.app;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -9,18 +8,20 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.List;
@@ -35,13 +36,15 @@ public class ChapterActivity extends AppCompatActivity {
     public static final String EXTRA_CHAPTER_ID = "extra_chapter_id";
     public static final String EXTRA_CHAPTER_TITLE = "extra_chapter_title";
 
-    private Toolbar toolbar;
     private LinearLayout topicsContainer;
     private String chapterId;
     private String chapterTitle;
     private final Executor io = Executors.newSingleThreadExecutor();
 
-    private LinearProgressIndicator chapterProgressBar;
+    private TextView chapterCount;
+    private TextView chapterProgress;
+    private TextView chapterTitleText;
+    private ImageView backButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,45 +52,24 @@ public class ChapterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chapter);
 
         topicsContainer = findViewById(R.id.topicsContainer);
-        chapterProgressBar = findViewById(R.id.chapterProgressBar);
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        chapterCount = findViewById(R.id.chapterCount);
+        chapterProgress = findViewById(R.id.chapterProgress);
+        chapterTitleText = findViewById(R.id.chapterTitleText);
+        backButton = findViewById(R.id.backButton);
+        
         updateStatusBarColor();
 
         chapterId = getIntent().getStringExtra(EXTRA_CHAPTER_ID);
         chapterTitle = getIntent().getStringExtra(EXTRA_CHAPTER_TITLE);
 
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            }
+        // Set chapter title
+        if (chapterTitleText != null && chapterTitle != null) {
+            chapterTitleText.setText(chapterTitle);
         }
 
-        // Ensure action bar exists and show Up arrow; set the title to the selected chapter title
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(chapterTitle != null ? chapterTitle : "Chapter");
-        }
-
-        // Keep toolbar title color consistent
-        toolbar.setTitle(chapterTitle != null ? chapterTitle : "Chapter");
-        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.on_surface));
-
-        // tint navigation icon to on_surface
-        final int navTint = ContextCompat.getColor(this, R.color.on_surface);
-        Drawable navDrawable = toolbar.getNavigationIcon();
-        if (navDrawable != null) {
-            navDrawable.setTint(navTint);
-            toolbar.setNavigationIcon(navDrawable);
-        } else {
-            toolbar.post(() -> {
-                Drawable d = toolbar.getNavigationIcon();
-                if (d != null) {
-                    d.setTint(navTint);
-                    toolbar.setNavigationIcon(d);
-                }
-            });
+        // Back button click handler
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> onBackPressed());
         }
 
         // load topics using lightweight summaries
@@ -126,14 +108,16 @@ public class ChapterActivity extends AppCompatActivity {
         }
 
         for (TopicSummary s : summaries) {
-            View v = inflater.inflate(R.layout.item_chapter, topicsContainer, false);
+            View v = inflater.inflate(R.layout.item_topic, topicsContainer, false);
 
-            TextView titleView = v.findViewById(R.id.chapterTitle);
-            TextView subtitleView = v.findViewById(R.id.chapterSubtitle);
-            TextView infoView = v.findViewById(R.id.chapterInfo);
-            LinearProgressIndicator progressBar = v.findViewById(R.id.progressBar);
-            View badgeView = v.findViewById(R.id.badge);
-            CardView cardView = (CardView) v;
+            TextView titleView = v.findViewById(R.id.topicTitle);
+            TextView subtitleView = v.findViewById(R.id.topicSubtitle);
+            TextView topicNumber = v.findViewById(R.id.topicNumber);
+            TextView topicTime = v.findViewById(R.id.topicTime);
+            TextView topicStatus = v.findViewById(R.id.topicStatus);
+            FrameLayout topicNumberContainer = v.findViewById(R.id.topicNumberContainer);
+            ImageView topicCheckmark = v.findViewById(R.id.topicCheckmark);
+            MaterialCardView cardView = (MaterialCardView) v;
 
             titleView.setText(s.title != null ? s.title : "Untitled");
 
@@ -150,15 +134,47 @@ public class ChapterActivity extends AppCompatActivity {
             }
             subtitleView.setText(displayText);
 
-            infoView.setVisibility(View.GONE);
-
-            if (progressBar != null) {
-                int p = s.completed ? 100 : 0;
-                progressBar.setProgress(p);
-                progressBar.setVisibility(s.completed ? View.VISIBLE : View.GONE);
+            // Set topic number from database (global number across all chapters)
+            topicNumber.setText(String.valueOf(s.number));
+            
+            // Always show the number, never hide it
+            topicNumber.setVisibility(View.VISIBLE);
+            if (topicCheckmark != null) {
+                topicCheckmark.setVisibility(View.GONE);
             }
 
-            if (badgeView != null) badgeView.setVisibility(View.GONE);
+            // Hide time for now (can be populated if available in TopicSummary)
+            if (topicTime != null) {
+                topicTime.setVisibility(View.GONE);
+            }
+
+            // Update card stroke and status based on completion
+            if (s.completed) {
+                // Completed topic - green background for number, "Done" status
+                topicNumberContainer.setBackgroundResource(R.drawable.bg_topic_number_done);
+                topicNumber.setTextColor(ContextCompat.getColor(this, R.color.badge_done_fg));
+                cardView.setStrokeColor(ContextCompat.getColor(this, R.color.outline));
+                
+                if (topicStatus != null) {
+                    topicStatus.setVisibility(View.VISIBLE);
+                    topicStatus.setText("Done");
+                    topicStatus.setBackgroundResource(R.drawable.bg_status_done);
+                    topicStatus.setTextColor(ContextCompat.getColor(this, R.color.badge_done_fg));
+                }
+            } else {
+                // Not completed - check if it's in progress or new
+                // For now, treat all incomplete as "New" with default stroke
+                topicNumberContainer.setBackgroundResource(R.drawable.bg_topic_number);
+                topicNumber.setTextColor(ContextCompat.getColor(this, R.color.on_surface));
+                cardView.setStrokeColor(ContextCompat.getColor(this, R.color.outline));
+                
+                if (topicStatus != null) {
+                    topicStatus.setVisibility(View.VISIBLE);
+                    topicStatus.setText("New");
+                    topicStatus.setTextColor(ContextCompat.getColor(this, R.color.on_surface_variant));
+                    topicStatus.setBackgroundResource(R.drawable.bg_status_new);
+                }
+            }
 
             final long rowId = s.rowid;
             cardView.setOnClickListener(view -> {
@@ -257,7 +273,7 @@ public class ChapterActivity extends AppCompatActivity {
     private void updateStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
-            int color = ContextCompat.getColor(this, R.color.toolbar_bg);
+            int color = ContextCompat.getColor(this, R.color.primary);
             window.setStatusBarColor(color);
 
             WindowInsetsControllerCompat insetsController =
@@ -274,13 +290,19 @@ public class ChapterActivity extends AppCompatActivity {
             AppDao dao = AppDatabase.getInstance(ChapterActivity.this).appDao();
             int total = dao.getTopicCountForChapter(chapterId);
             int completed = dao.getCompletedCountForChapter(chapterId);
-            int percent = 0;
-            if (total > 0) percent = (int) Math.round((completed * 100.0) / total);
 
-            final int finalPercent = percent;
+            final int finalTotal = total;
+            final int finalCompleted = completed;
+            
             runOnUiThread(() -> {
-                if (chapterProgressBar != null) {
-                    chapterProgressBar.setProgress(finalPercent);
+                // Update header text
+                if (chapterCount != null) {
+                    String countText = finalTotal == 1 ? finalTotal + " chapter" : finalTotal + " chapters";
+                    chapterCount.setText(countText);
+                }
+                
+                if (chapterProgress != null) {
+                    chapterProgress.setText(finalCompleted + " of " + finalTotal + " done");
                 }
             });
         });

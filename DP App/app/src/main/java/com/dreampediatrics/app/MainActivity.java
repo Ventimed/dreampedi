@@ -393,12 +393,13 @@ public class MainActivity extends AppCompatActivity {
         // set initial letter from username if present
         updateToolbarInitial();
 
-        // Purchase button wiring if present in layout
-        MaterialButton btnPurchaseCard = findViewById(R.id.btnPurchaseCard);
-        if (btnPurchaseCard != null) {
-            btnPurchaseCard.setOnClickListener(v -> {
-                PaymentDialogFragment dialog = new PaymentDialogFragment();
-                dialog.show(getSupportFragmentManager(), "payment_dialog");
+        // Subscribe button wiring if present in layout (now handled in HomeFragment)
+        // Keeping this for backward compatibility with any other layouts
+        MaterialButton btnSubscribe = findViewById(R.id.btnSubscribe);
+        if (btnSubscribe != null) {
+            btnSubscribe.setOnClickListener(v -> {
+                PaymentBottomSheet bottomSheet = new PaymentBottomSheet();
+                bottomSheet.show(getSupportFragmentManager(), "payment_bottom_sheet");
             });
         }
     }
@@ -713,7 +714,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateToolbarTitle(int position) {
-        String[] titles = {"Dream Pediatrics", "History", "Bookmarks", "Search", "Settings"};
+        String[] titles = {"Dream Pediatrics", "Recent", "Bookmarks", "Search", "Settings"};
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(titles[position]);
         }

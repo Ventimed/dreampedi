@@ -1,71 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="?attr/colorSurface"
-    android:paddingTop="20dp">
+    android:orientation="vertical"
+    android:background="@color/surface">
 
+    <!-- Reading Activity Section with Clear All Button (Fixed) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="8dp">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="16dp"
+        android:background="@color/surface">
 
-        <!-- Section Header -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_margin="16dp"
-            android:paddingHorizontal="16dp"
-            android:gravity="center_vertical"
-            android:background="@drawable/section_header_background"
-            android:orientation="horizontal"
-            android:elevation="2dp">
+            android:layout_weight="1"
+            android:text="Reading activity"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/on_surface" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/btnClearHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1.5dp"
+            app:strokeColor="@color/outline"
+            app:cardBackgroundColor="@android:color/transparent"
+            android:foreground="?android:attr/selectableItemBackground">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reading Activity"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_weight="1"
-                android:textColor="#000000" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/btnClearHistory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="6dp"
-                android:gravity="center"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="?attr/colorPrimaryVariant"
-                android:foreground="?android:attr/selectableItemBackground">
-
-                <TextView
-                    android:id="@+id/chipText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="clear all"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp"
-                    android:textSize="14sp"
-                    android:textColor="?attr/colorOnSurface" />
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-
-        <!-- History Container -->
-        <LinearLayout
-            android:id="@+id/historyContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="16dp"
+                android:text="Clear all"
+                android:textSize="16sp"
+                android:textColor="@color/on_surface" />
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
-</androidx.core.widget.NestedScrollView>
+    <!-- Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/surface">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!-- History Container -->
+            <LinearLayout
+                android:id="@+id/historyContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="16dp" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>
