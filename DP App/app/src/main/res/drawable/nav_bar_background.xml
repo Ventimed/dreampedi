@@ -9,7 +9,7 @@
     <!-- Main background with top padding to show the border -->
     <item android:top="1dp">
         <shape android:shape="rectangle">
-            <solid android:color="@color/nav_background"/>
+            <solid android:color="@color/surface"/>
         </shape>
     </item>
 </layer-list>

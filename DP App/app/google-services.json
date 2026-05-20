@@ -3,17 +3,22 @@
     "project_number": "155491826795",
     "firebase_url": "https://dream-pedi-default-rtdb.firebaseio.com",
     "project_id": "dream-pedi",
-    "storage_bucket": "dream-pedi.appspot.com"
+    "storage_bucket": "dream-pedi.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:155491826795:android:6f7d05d81f0e2fabb3c52e",
+        "mobilesdk_app_id": "1:155491826795:android:b4d93f36c222db84b3c52e",
         "android_client_info": {
-          "package_name": "com.dreampediatrics.app"
+          "package_name": "com.dream.pediadmin"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "155491826795-8lm28no4mvs8eq4gf33e9s8j3h221la8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBvmSHwfKqrTbeZBnjNd4t3kt6X-bnyREY"
@@ -21,7 +26,49 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "155491826795-8lm28no4mvs8eq4gf33e9s8j3h221la8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155491826795:android:6f7d05d81f0e2fabb3c52e",
+        "android_client_info": {
+          "package_name": "com.dreampediatrics.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "155491826795-b7mkqk1b7npn26lcj8h3at4apamupo7a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dreampediatrics.app",
+            "certificate_hash": "3e5b67332573afb412ec4baec6707d45e830d312"
+          }
+        },
+        {
+          "client_id": "155491826795-8lm28no4mvs8eq4gf33e9s8j3h221la8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvmSHwfKqrTbeZBnjNd4t3kt6X-bnyREY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "155491826795-8lm28no4mvs8eq4gf33e9s8j3h221la8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

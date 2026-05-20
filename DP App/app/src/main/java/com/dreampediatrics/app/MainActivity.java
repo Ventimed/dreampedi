@@ -120,6 +120,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "app_prefs";
     private static final String PREF_FCM_TOKEN = "fcm_token";
+    
+    // For double back press to exit
+    private long backPressedTime = 0;
+    private static final int BACK_PRESS_INTERVAL = 2000; // 2 seconds
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Apply theme BEFORE inflating layout
@@ -1480,5 +1485,27 @@ public class MainActivity extends AppCompatActivity {
         updateStatusBarColor();
         // Re-perform verification checks on resume
         performAccountVerificationChecks();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Check if we're on the home page (first page of ViewPager)
+        if (viewPager != null && viewPager.getCurrentItem() == 0) {
+            // If back was pressed within the last 2 seconds, exit the app
+            if (backPressedTime + BACK_PRESS_INTERVAL > System.currentTimeMillis()) {
+                super.onBackPressed();
+                finish();
+                return;
+            } else {
+                // Show toast message to press back again
+                showNotification("Press back again to exit");
+            }
+            backPressedTime = System.currentTimeMillis();
+        } else {
+            // If not on home page, navigate to home page
+            if (viewPager != null) {
+                viewPager.setCurrentItem(0);
+            }
+        }
     }
 }

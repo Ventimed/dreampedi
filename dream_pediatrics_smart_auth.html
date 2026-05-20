@@ -1,0 +1,326 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; }
+
+.phone {
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 0.5px solid #D3D1C7;
+  overflow: hidden;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* BRAND HEADER */
+.brand-top { background: #F5A623; padding: 24px 18px 20px; }
+.brand-logo-row { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+.brand-icon { width: 32px; height: 32px; border-radius: 9px; background: rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 17px; color: #5A3700; }
+.brand-name { font-size: 14px; font-weight: 500; color: #3A2200; }
+.brand-tagline { font-size: 11px; color: #7A4D00; line-height: 1.4; }
+
+/* SCREENS */
+.auth-screen { display: none; padding: 22px 18px 24px; }
+.auth-screen.active { display: block; }
+
+.screen-title { font-size: 17px; font-weight: 500; color: #1A1A18; margin-bottom: 3px; }
+.screen-sub { font-size: 11px; color: #888780; margin-bottom: 20px; line-height: 1.5; }
+
+/* GOOGLE BTN */
+.google-btn {
+  width: 100%; padding: 11px 14px;
+  background: #FFFFFF;
+  border: 1px solid #D3D1C7;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-size: 13px; font-weight: 500; color: #1A1A18;
+  cursor: pointer; margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.google-btn:hover { border-color: #B4B2A9; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+.google-logo { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* DIVIDER */
+.divider-row { display: flex; align-items: center; gap: 10px; margin: 14px 0; }
+.div-line { flex: 1; height: 0.5px; background: #D3D1C7; }
+.div-label { font-size: 11px; color: #B4B2A9; white-space: nowrap; }
+
+/* EMAIL ROW */
+.input-wrap {
+  display: flex; align-items: center;
+  background: #F5F5F0; border: 0.5px solid #D3D1C7;
+  border-radius: 10px; padding: 0 12px; gap: 9px;
+}
+.input-wrap.focused { border-color: #F5A623; }
+.input-icon { font-size: 15px; color: #888780; flex-shrink: 0; }
+.input-field { flex: 1; background: none; border: none; outline: none; font-size: 12px; color: #1A1A18; padding: 11px 0; }
+.input-field::placeholder { color: #B4B2A9; }
+.eye-btn { font-size: 15px; color: #B4B2A9; background: none; border: none; cursor: pointer; }
+
+.input-label { font-size: 11px; color: #5F5E5A; margin-bottom: 5px; display: block; }
+.input-group { margin-bottom: 11px; }
+
+.primary-btn {
+  width: 100%; padding: 12px;
+  background: #F5A623; color: #3A2200;
+  border: none; border-radius: 10px;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; margin-top: 6px;
+}
+.primary-btn:hover { background: #E8960F; }
+
+.back-row { display: flex; align-items: center; gap: 6px; margin-bottom: 18px; cursor: pointer; width: fit-content; }
+.back-row span { font-size: 11px; color: #888780; }
+
+.forgot-row { display: flex; justify-content: flex-end; margin: 4px 0 16px; }
+.forgot-link { font-size: 11px; color: #E8960F; cursor: pointer; }
+
+.terms { font-size: 10px; color: #B4B2A9; text-align: center; margin-top: 14px; line-height: 1.6; }
+.terms-link { color: #888780; }
+
+/* email chip */
+.email-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #FEF3DC; border-radius: 7px;
+  padding: 4px 10px; margin-bottom: 18px; cursor: pointer;
+}
+.email-chip-text { font-size: 11px; color: #854F0B; font-weight: 500; }
+.email-chip-edit { font-size: 11px; color: #B4B2A9; }
+
+/* strength */
+.strength-row { display: flex; gap: 4px; margin-top: 6px; }
+.s-seg { flex: 1; height: 3px; border-radius: 2px; background: #D3D1C7; }
+.s-seg.weak { background: #E05555; }
+.s-seg.fair { background: #F5A623; }
+.s-seg.good { background: #1D9E75; }
+.strength-label { font-size: 10px; color: #888780; margin-top: 4px; }
+
+/* success */
+.success-wrap { text-align: center; padding: 10px 0 6px; }
+.success-icon { width: 48px; height: 48px; border-radius: 50%; background: #E1F5EE; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #1D9E75; margin: 0 auto 12px; }
+.success-title { font-size: 14px; font-weight: 500; color: #1A1A18; margin-bottom: 6px; }
+.success-sub { font-size: 11px; color: #888780; line-height: 1.6; margin-bottom: 18px; }
+
+/* detecting pill */
+.detecting { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 0 8px; }
+.spinner { width: 16px; height: 16px; border: 2px solid #D3D1C7; border-top-color: #F5A623; border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.detecting-label { font-size: 12px; color: #888780; }
+
+.note-pill { background: #F5F5F0; border-radius: 8px; padding: 8px 12px; margin-bottom: 16px; font-size: 11px; color: #5F5E5A; line-height: 1.5; border: 0.5px solid #D3D1C7; display: flex; gap: 8px; align-items: flex-start; }
+.note-icon { font-size: 13px; color: #F5A623; flex-shrink: 0; margin-top: 1px; }
+</style>
+
+<h2 class="sr-only">Interactive Dream Pediatrics smart auth — one page Google and email sign-in with automatic new vs existing user detection</h2>
+
+<div class="phone" id="phone">
+  <div class="brand-top">
+    <div class="brand-logo-row">
+      <div class="brand-icon"><i class="ti ti-stethoscope" aria-hidden="true"></i></div>
+      <span class="brand-name">Dream Pediatrics</span>
+    </div>
+    <div class="brand-tagline">Your pediatric clinical reference, everywhere.</div>
+  </div>
+
+  <!-- STEP 1: LANDING -->
+  <div class="auth-screen active" id="step-landing">
+    <div class="screen-title">Get started</div>
+    <div class="screen-sub">Sign in or create your account in seconds</div>
+
+    <button class="google-btn" onclick="googleFlow()">
+      <svg class="google-logo" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Continue with Google
+    </button>
+
+    <div class="divider-row">
+      <div class="div-line"></div>
+      <span class="div-label">or continue with email</span>
+      <div class="div-line"></div>
+    </div>
+
+    <div class="input-group">
+      <span class="input-label">Email address</span>
+      <div class="input-wrap" id="email-wrap">
+        <i class="ti ti-mail input-icon" aria-hidden="true"></i>
+        <input class="input-field" id="email-input" type="email" placeholder="you@example.com" onkeydown="emailKeydown(event)" />
+      </div>
+    </div>
+
+    <button class="primary-btn" onclick="detectEmail()">Continue with email</button>
+
+    <div class="terms">
+      By continuing you agree to our <span class="terms-link">Terms of Use</span> and <span class="terms-link">Privacy Policy</span>
+    </div>
+  </div>
+
+  <!-- STEP 2: DETECTING -->
+  <div class="auth-screen" id="step-detecting">
+    <div class="detecting">
+      <div class="spinner"></div>
+      <span class="detecting-label">Checking your account…</span>
+    </div>
+  </div>
+
+  <!-- STEP 3a: EXISTING USER — PASSWORD -->
+  <div class="auth-screen" id="step-login">
+    <div class="back-row" onclick="goBack()">
+      <i class="ti ti-arrow-left" style="font-size:13px;color:#888780" aria-hidden="true"></i>
+      <span>Back</span>
+    </div>
+    <div class="screen-title">Welcome back</div>
+    <div class="screen-sub">We found your account</div>
+    <div class="email-chip" onclick="goBack()">
+      <i class="ti ti-mail" style="font-size:12px;color:#E8960F" aria-hidden="true"></i>
+      <span class="email-chip-text" id="chip-email-login"></span>
+      <span class="email-chip-edit">· change</span>
+    </div>
+    <div class="input-group">
+      <span class="input-label">Password</span>
+      <div class="input-wrap">
+        <i class="ti ti-lock input-icon" aria-hidden="true"></i>
+        <input class="input-field" type="password" placeholder="Enter your password" />
+        <button class="eye-btn" aria-label="Show password"><i class="ti ti-eye"></i></button>
+      </div>
+    </div>
+    <div class="forgot-row"><span class="forgot-link">Forgot password?</span></div>
+    <button class="primary-btn" onclick="showSuccess('login')">Sign in</button>
+  </div>
+
+  <!-- STEP 3b: NEW USER — SIGN UP -->
+  <div class="auth-screen" id="step-signup">
+    <div class="back-row" onclick="goBack()">
+      <i class="ti ti-arrow-left" style="font-size:13px;color:#888780" aria-hidden="true"></i>
+      <span>Back</span>
+    </div>
+    <div class="screen-title">Create account</div>
+    <div class="screen-sub">No account found — let's get you set up</div>
+    <div class="email-chip" onclick="goBack()">
+      <i class="ti ti-mail" style="font-size:12px;color:#E8960F" aria-hidden="true"></i>
+      <span class="email-chip-text" id="chip-email-signup"></span>
+      <span class="email-chip-edit">· change</span>
+    </div>
+    <div class="input-group">
+      <span class="input-label">Full name</span>
+      <div class="input-wrap">
+        <i class="ti ti-user input-icon" aria-hidden="true"></i>
+        <input class="input-field" type="text" placeholder="Dr. Your Name" />
+      </div>
+    </div>
+    <div class="input-group">
+      <span class="input-label">Password</span>
+      <div class="input-wrap">
+        <i class="ti ti-lock input-icon" aria-hidden="true"></i>
+        <input class="input-field" type="password" placeholder="Min. 8 characters" />
+        <button class="eye-btn" aria-label="Show password"><i class="ti ti-eye"></i></button>
+      </div>
+      <div class="strength-row">
+        <div class="s-seg fair"></div>
+        <div class="s-seg fair"></div>
+        <div class="s-seg"></div>
+        <div class="s-seg"></div>
+      </div>
+      <div class="strength-label">Password strength: fair</div>
+    </div>
+    <div class="input-group" style="margin-bottom:4px">
+      <span class="input-label">Confirm password</span>
+      <div class="input-wrap">
+        <i class="ti ti-lock input-icon" aria-hidden="true"></i>
+        <input class="input-field" type="password" placeholder="Re-enter password" />
+        <button class="eye-btn" aria-label="Show password"><i class="ti ti-eye"></i></button>
+      </div>
+    </div>
+    <button class="primary-btn" onclick="showSuccess('signup')">Create account</button>
+    <div class="terms">By signing up you agree to our <span class="terms-link">Terms of Use</span> and <span class="terms-link">Privacy Policy</span></div>
+  </div>
+
+  <!-- STEP 4: GOOGLE FLOW -->
+  <div class="auth-screen" id="step-google">
+    <div class="note-pill">
+      <i class="ti ti-info-circle note-icon" aria-hidden="true"></i>
+      <span>In your real app, this triggers the Google OAuth popup. New Google users are created automatically; returning users are signed in instantly.</span>
+    </div>
+    <div class="success-wrap">
+      <div class="success-icon"><i class="ti ti-check" aria-hidden="true"></i></div>
+      <div class="success-title">Signed in with Google</div>
+      <div class="success-sub">Account detected and verified automatically. No password needed.</div>
+      <button class="primary-btn" onclick="resetAll()">Go to home screen</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: SUCCESS -->
+  <div class="auth-screen" id="step-success">
+    <div class="success-wrap">
+      <div class="success-icon"><i class="ti ti-check" aria-hidden="true"></i></div>
+      <div class="success-title" id="success-title">You're in!</div>
+      <div class="success-sub" id="success-sub">Taking you to your dashboard.</div>
+      <button class="primary-btn" onclick="resetAll()">Go to home screen</button>
+    </div>
+  </div>
+
+</div>
+
+<p style="text-align:center;font-size:11px;color:#888780;margin-top:10px;">
+  Try Google → or enter <b>existing@doc.com</b> to simulate login, any other email to simulate sign up
+</p>
+
+<script>
+var EXISTING = 'existing@doc.com';
+
+function show(id) {
+  document.querySelectorAll('.auth-screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+function emailKeydown(e) {
+  if (e.key === 'Enter') detectEmail();
+}
+
+function detectEmail() {
+  var val = document.getElementById('email-input').value.trim();
+  if (!val || !val.includes('@')) {
+    document.getElementById('email-wrap').style.borderColor = '#E05555';
+    return;
+  }
+  document.getElementById('email-wrap').style.borderColor = '#D3D1C7';
+  show('step-detecting');
+  setTimeout(function() {
+    if (val.toLowerCase() === EXISTING) {
+      document.getElementById('chip-email-login').textContent = val;
+      show('step-login');
+    } else {
+      document.getElementById('chip-email-signup').textContent = val;
+      show('step-signup');
+    }
+  }, 1400);
+}
+
+function googleFlow() {
+  show('step-google');
+}
+
+function goBack() {
+  show('step-landing');
+}
+
+function showSuccess(type) {
+  if (type === 'login') {
+    document.getElementById('success-title').textContent = 'Welcome back!';
+    document.getElementById('success-sub').textContent = 'You\'re signed in. Let\'s pick up where you left off.';
+  } else {
+    document.getElementById('success-title').textContent = 'Account created!';
+    document.getElementById('success-sub').textContent = 'Your account is ready. Subscribe to unlock all chapters.';
+  }
+  show('step-success');
+}
+
+function resetAll() {
+  document.getElementById('email-input').value = '';
+  show('step-landing');
+}
+</script>

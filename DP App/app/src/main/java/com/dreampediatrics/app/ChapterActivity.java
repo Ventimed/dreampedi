@@ -113,6 +113,7 @@ public class ChapterActivity extends AppCompatActivity {
             TextView titleView = v.findViewById(R.id.topicTitle);
             TextView subtitleView = v.findViewById(R.id.topicSubtitle);
             TextView topicNumber = v.findViewById(R.id.topicNumber);
+            TextView topicChap = v.findViewById(R.id.topicChap);
             TextView topicTime = v.findViewById(R.id.topicTime);
             TextView topicStatus = v.findViewById(R.id.topicStatus);
             FrameLayout topicNumberContainer = v.findViewById(R.id.topicNumberContainer);
@@ -153,6 +154,7 @@ public class ChapterActivity extends AppCompatActivity {
                 // Completed topic - green background for number, "Done" status
                 topicNumberContainer.setBackgroundResource(R.drawable.bg_topic_number_done);
                 topicNumber.setTextColor(ContextCompat.getColor(this, R.color.badge_done_fg));
+                topicChap.setTextColor(ContextCompat.getColor(this, R.color.badge_done_fg));
                 cardView.setStrokeColor(ContextCompat.getColor(this, R.color.outline));
                 
                 if (topicStatus != null) {
@@ -166,6 +168,7 @@ public class ChapterActivity extends AppCompatActivity {
                 // For now, treat all incomplete as "New" with default stroke
                 topicNumberContainer.setBackgroundResource(R.drawable.bg_topic_number);
                 topicNumber.setTextColor(ContextCompat.getColor(this, R.color.on_surface));
+                topicChap.setTextColor(ContextCompat.getColor(this, R.color.on_surface));
                 cardView.setStrokeColor(ContextCompat.getColor(this, R.color.outline));
                 
                 if (topicStatus != null) {

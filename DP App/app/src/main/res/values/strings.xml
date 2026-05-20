@@ -6,6 +6,7 @@
     <string name="bookmarks">Saved</string>
     <string name="search">Search</string>
     <string name="settings">Settings</string>
+    <string name="version">Version v2.3</string>
 
     <!-- Search hints -->
     <string name="search_chapters_hint">Search chapters and sections...</string>
@@ -53,4 +54,7 @@
     <string name="no_results">No Results Found</string>
     <string name="no_results_message">No content found for "%1$s". Try different keywords or check spelling.</string>
     <string name="search_description">Enter keywords to search through all chapters, sections, and medical content in the textbook</string>
+    
+    <!-- Google Sign-In OAuth Client ID (auto-generated from google-services.json) -->
+    <string name="default_web_client_id" translatable="false">155491826795-8lm28no4mvs8eq4gf33e9s8j3h221la8.apps.googleusercontent.com</string>
 </resources>

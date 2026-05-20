@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.text.InputType;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,7 +48,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+// Google Sign-In imports
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.GoogleAuthProvider;
+
 import java.util.HashMap;
+import java.util.List;
+
 public class AuthActivity extends AppCompatActivity {
 
     // Preference keys
@@ -55,33 +69,49 @@ public class AuthActivity extends AppCompatActivity {
     private static final String KEY_USERNAME = "username";
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
     private static final int REQ_POST_NOTIFICATIONS = 101;
+    private static final int RC_GOOGLE_SIGN_IN = 9001;
 
 
     // Firebase
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+    private GoogleSignInClient mGoogleSignInClient;
 
-    // Login views
+    // Landing screen views
     private LinearLayout loginLayout;
     private EditText loginUsername;
-    private EditText loginPassword;
-    private Button btnLogin;
-    private TextView linkToSignUp;
+    private MaterialButton btnGoogleSignIn;
+    private MaterialButton btnContinueEmail;
+    private LinearLayout emailInputWrap;
 
-    // Register views
+    // Password login screen views (existing users)
+    private LinearLayout passwordLoginLayout;
+    private EditText loginPassword;
+    private MaterialButton btnLogin;
+    private MaterialButton btnGoogleSignInFromLogin;
+    private LinearLayout backToLanding;
+    private LinearLayout emailChipLogin;
+    private TextView chipEmailText;
+    private ImageView togglePasswordVisibility;
+
+    // Register views (new users)
     private LinearLayout registerLayout;
-    private EditText registerEmail;
     private EditText registerName;
     private EditText registerPassword;
     private EditText registerconfPassword;
-    private Button btnRegister;
-    private TextView linkToLogin;
+    private MaterialButton btnRegister;
+    private LinearLayout backToLandingFromSignup;
+    private LinearLayout emailChipSignup;
+    private TextView chipEmailTextSignup;
+    private ImageView toggleRegisterPasswordVisibility;
+    private ImageView toggleConfirmPasswordVisibility;
 
     // Forgot password views
     private LinearLayout forgotpassLayout;
     private EditText resetEmail;
     private Button btnBack, btnForgotpass;
     private TextView forgotpass;
+    private LinearLayout backToLoginFromForgot;
 
     private AlertDialog loadingDialog;
     private ProgressDialog progressDialog;
@@ -103,6 +133,22 @@ public class AuthActivity extends AppCompatActivity {
         // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        // Configure Google Sign-In (only if OAuth is configured in Firebase)
+        // Note: GoogleSignInOptions is deprecated but still fully functional
+        // We'll migrate to Credential Manager API in a future update
+        try {
+            @SuppressWarnings("deprecation")
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build();
+            mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        } catch (Exception e) {
+            Log.w("AuthActivity", "Google Sign-In not configured yet: " + e.getMessage());
+            // Google Sign-In will be disabled until Firebase is properly configured
+            mGoogleSignInClient = null;
+        }
 
         // Apply night mode
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
@@ -126,52 +172,202 @@ public class AuthActivity extends AppCompatActivity {
         // Set up click listeners
         setupClickListeners();
 
-        // Initial state: show login
-        showLogin();
+        // Initial state: show landing screen
+        showLanding();
     }
 
     private void initViews() {
-        // Login views
+        // Landing screen views
         loginLayout = findViewById(R.id.loginLayout);
         loginUsername = findViewById(R.id.loginUsername);
+        btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
+        btnContinueEmail = findViewById(R.id.btnContinueEmail);
+        emailInputWrap = findViewById(R.id.emailInputWrap);
+        
+        // Hide Google Sign-In button if not configured
+        if (mGoogleSignInClient == null && btnGoogleSignIn != null) {
+            btnGoogleSignIn.setVisibility(View.GONE);
+        }
+
+        // Password login screen views (existing users)
+        passwordLoginLayout = findViewById(R.id.passwordLoginLayout);
         loginPassword = findViewById(R.id.loginPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        linkToSignUp = findViewById(R.id.linkToSignUp);
+        btnGoogleSignInFromLogin = findViewById(R.id.btnGoogleSignInFromLogin);
+        forgotpass = findViewById(R.id.forgotpasstext);
+        backToLanding = findViewById(R.id.backToLanding);
+        emailChipLogin = findViewById(R.id.emailChipLogin);
+        chipEmailText = findViewById(R.id.chipEmailText);
+        togglePasswordVisibility = findViewById(R.id.togglePasswordVisibility);
+        
+        // Hide Google Sign-In button on login screen if not configured
+        if (mGoogleSignInClient == null && btnGoogleSignInFromLogin != null) {
+            btnGoogleSignInFromLogin.setVisibility(View.GONE);
+        }
 
-        // Register views
+        // Register screen views (new users)
         registerLayout = findViewById(R.id.registerLayout);
-        registerEmail = findViewById(R.id.registerEmail);
         registerName = findViewById(R.id.registerName);
         registerPassword = findViewById(R.id.registerPassword);
         registerconfPassword = findViewById(R.id.confirm_registerPassword);
         btnRegister = findViewById(R.id.btnRegister);
-        linkToLogin = findViewById(R.id.linkToLogin);
+        backToLandingFromSignup = findViewById(R.id.backToLandingFromSignup);
+        emailChipSignup = findViewById(R.id.emailChipSignup);
+        chipEmailTextSignup = findViewById(R.id.chipEmailTextSignup);
+        toggleRegisterPasswordVisibility = findViewById(R.id.toggleRegisterPasswordVisibility);
+        toggleConfirmPasswordVisibility = findViewById(R.id.toggleConfirmPasswordVisibility);
 
         // Forgot password views
         forgotpassLayout = findViewById(R.id.forgotpassLayout);
         resetEmail = findViewById(R.id.resetemail);
         btnBack = findViewById(R.id.btnBack);
         btnForgotpass = findViewById(R.id.btnForgotpass);
-        forgotpass = findViewById(R.id.forgotpasstext);
+        backToLoginFromForgot = findViewById(R.id.backToLoginFromForgot);
     }
 
     private void setupClickListeners() {
-        // Navigation between forms
-        linkToSignUp.setOnClickListener(v -> showRegister());
-        linkToLogin.setOnClickListener(v -> showLogin());
-        forgotpass.setOnClickListener(v -> showForgot());
-        btnBack.setOnClickListener(v -> showLogin());
-
+        // Google Sign-In button (only if configured)
+        if (btnGoogleSignIn != null && mGoogleSignInClient != null) {
+            btnGoogleSignIn.setOnClickListener(v -> signInWithGoogle());
+        }
+        
+        // Google Sign-In button on login screen (only if configured)
+        if (btnGoogleSignInFromLogin != null && mGoogleSignInClient != null) {
+            btnGoogleSignInFromLogin.setOnClickListener(v -> signInWithGoogle());
+        }
+        
+        // Continue with email - detect if user exists
+        btnContinueEmail.setOnClickListener(v -> detectUserEmail());
+        
+        // Back navigation
+        backToLanding.setOnClickListener(v -> showLanding());
+        backToLandingFromSignup.setOnClickListener(v -> showLanding());
+        backToLoginFromForgot.setOnClickListener(v -> showPasswordLogin());
+        emailChipLogin.setOnClickListener(v -> showLanding());
+        emailChipSignup.setOnClickListener(v -> showLanding());
+        
+        // Password visibility toggles
+        if (togglePasswordVisibility != null) {
+            togglePasswordVisibility.setOnClickListener(v -> togglePasswordVisibility(loginPassword, togglePasswordVisibility));
+        }
+        if (toggleRegisterPasswordVisibility != null) {
+            toggleRegisterPasswordVisibility.setOnClickListener(v -> togglePasswordVisibility(registerPassword, toggleRegisterPasswordVisibility));
+        }
+        if (toggleConfirmPasswordVisibility != null) {
+            toggleConfirmPasswordVisibility.setOnClickListener(v -> togglePasswordVisibility(registerconfPassword, toggleConfirmPasswordVisibility));
+        }
+        
         // Authentication actions
         btnLogin.setOnClickListener(v -> attemptLogin());
         btnRegister.setOnClickListener(v -> attemptRegister());
+        forgotpass.setOnClickListener(v -> showForgot());
         btnForgotpass.setOnClickListener(v -> showResetConfirmationDialog());
+        btnBack.setOnClickListener(v -> showPasswordLogin());
     }
 
-    private void attemptLogin() {
-        String email = loginUsername.getText().toString().trim();
-        String password = loginPassword.getText().toString().trim();
+    private void togglePasswordVisibility(EditText passwordField, ImageView toggleIcon) {
+        if (passwordField.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+            // Show password - change to open eye icon
+            passwordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            toggleIcon.setImageResource(R.drawable.ic_passvis);
+        } else {
+            // Hide password - change to closed eye icon
+            passwordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            toggleIcon.setImageResource(R.drawable.ic_passhide);
+        }
+        // Move cursor to end
+        passwordField.setSelection(passwordField.getText().length());
+    }
 
+    /**
+     * Google Sign-In flow - handles both new and existing users automatically
+     */
+    private void signInWithGoogle() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_GOOGLE_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account.getIdToken());
+            } catch (ApiException e) {
+                Log.w("AuthActivity", "Google sign in failed", e);
+                Toast.makeText(this, "Google sign-in failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(String idToken) {
+        progressDialog.setMessage("Signing in with Google...");
+        progressDialog.show();
+        
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    progressDialog.dismiss();
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            // Save user data
+                            String displayName = user.getDisplayName() != null ? user.getDisplayName() : "User";
+                            saveUsernameToPrefs(displayName);
+                            saveLoginState(true, displayName);
+                            
+                            // Check if user exists in database, if not create
+                            DatabaseReference userRef = mDatabase.child("users").child(user.getUid());
+                            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (!snapshot.exists()) {
+                                        // New Google user - create account
+                                        saveUserToDatabase(user, displayName);
+                                    } else {
+                                        // Existing user - update login status
+                                        updateUserLoginStatus(user.getUid(), true);
+                                    }
+                                    
+                                    // Read featuresLocked and save to client prefs
+                                    Boolean featuresLocked = snapshot.hasChild("featuresLocked") ? 
+                                        snapshot.child("featuresLocked").getValue(Boolean.class) : true;
+                                    SharedPreferences dp = getSharedPreferences("DreamPediatricsPrefs", MODE_PRIVATE);
+                                    dp.edit().putBoolean("features_unlocked", featuresLocked != null && !featuresLocked).apply();
+                                    dp.edit().putBoolean("user_verified", featuresLocked != null && !featuresLocked).apply();
+                                    
+                                    navigateToMainActivity();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Log.w("AuthActivity", "Database check failed: " + error.getMessage());
+                                    navigateToMainActivity(); // Continue anyway
+                                }
+                            });
+                        }
+                    } else {
+                        Toast.makeText(AuthActivity.this, 
+                            "Authentication failed: " + task.getException().getMessage(), 
+                            Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /**
+     * Email detection - checks if email exists and routes to appropriate screen
+     * Like the HTML: existing@doc.com → login, any other → sign up
+     * 
+     * Strategy: Try to create account with a dummy password. If it fails with 
+     * "email already in use", the account exists → show login. Otherwise → show signup.
+     * If it's a Google-only account, we'll detect that when they try to login.
+     */
+    private void detectUserEmail() {
+        String email = loginUsername.getText().toString().trim();
+        
         // Validation
         if (TextUtils.isEmpty(email)) {
             loginUsername.setError("Email is required");
@@ -184,6 +380,199 @@ public class AuthActivity extends AppCompatActivity {
             loginUsername.requestFocus();
             return;
         }
+
+        progressDialog.setMessage("Checking your account...");
+        progressDialog.show();
+
+        // Strategy: Try to create account with a dummy password to check if email exists
+        String dummyPassword = "TempCheck123!@#$%^&*()_+";
+        
+        mAuth.createUserWithEmailAndPassword(email, dummyPassword)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Account was created - delete it immediately and show signup
+                        FirebaseUser tempUser = mAuth.getCurrentUser();
+                        if (tempUser != null) {
+                            tempUser.delete().addOnCompleteListener(deleteTask -> {
+                                progressDialog.dismiss();
+                                Log.d("AuthActivity", "New user detected - showing sign-up screen");
+                                chipEmailTextSignup.setText(email);
+                                showRegister();
+                            });
+                        } else {
+                            progressDialog.dismiss();
+                            chipEmailTextSignup.setText(email);
+                            showRegister();
+                        }
+                    } else {
+                        // Check the exception type
+                        Exception exception = task.getException();
+                        progressDialog.dismiss();
+                        
+                        if (exception instanceof FirebaseAuthUserCollisionException) {
+                            // Email already exists - show login screen
+                            // (We'll detect if it's Google-only when they try to login)
+                            Log.d("AuthActivity", "Existing user detected - showing login screen");
+                            chipEmailText.setText(email);
+                            showPasswordLogin();
+                        } else {
+                            // Other error - default to signup
+                            Log.d("AuthActivity", "Error or new user - showing sign-up screen");
+                            chipEmailTextSignup.setText(email);
+                            showRegister();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Check if account is Google-only (no password) after login attempt fails
+     */
+    private void checkIfGoogleOnlyAccount(String email) {
+        Log.d("AuthActivity", "Checking if account is Google-only for: " + email);
+        
+        mAuth.fetchSignInMethodsForEmail(email)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        List<String> signInMethods = task.getResult().getSignInMethods();
+                        
+                        Log.d("AuthActivity", "fetchSignInMethodsForEmail SUCCESS");
+                        Log.d("AuthActivity", "Sign-in methods for " + email + ": " + 
+                            (signInMethods != null ? signInMethods.toString() : "null"));
+                        Log.d("AuthActivity", "Sign-in methods size: " + (signInMethods != null ? signInMethods.size() : "null"));
+                        
+                        // Check if account only has Google provider (no password)
+                        boolean hasPassword = signInMethods != null && 
+                            (signInMethods.contains("password") || signInMethods.contains("emailLink"));
+                        boolean hasGoogle = signInMethods != null && 
+                            signInMethods.contains("google.com");
+                        
+                        Log.d("AuthActivity", "hasPassword: " + hasPassword + ", hasGoogle: " + hasGoogle);
+                        
+                        if (hasGoogle && !hasPassword) {
+                            // Account exists with Google only - show helpful dialog
+                            Log.d("AuthActivity", "Showing Google-only account dialog");
+                            showGoogleOnlyAccountDialog(email);
+                        } else if (signInMethods == null || signInMethods.isEmpty()) {
+                            // Empty sign-in methods - this might be a Google-only account
+                            // Show the dialog to be safe
+                            Log.d("AuthActivity", "Empty sign-in methods - showing Google-only dialog as fallback");
+                            showGoogleOnlyAccountDialog(email);
+                        } else {
+                            // Has password or unknown - show normal error
+                            Log.d("AuthActivity", "Account has password - showing normal error");
+                            Toast.makeText(AuthActivity.this, "Invalid password. Please try again.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        // Could not check - show the dialog as a fallback
+                        Log.e("AuthActivity", "fetchSignInMethodsForEmail FAILED: " + 
+                            (task.getException() != null ? task.getException().getMessage() : "unknown"));
+                        Log.d("AuthActivity", "Showing Google-only dialog as fallback");
+                        showGoogleOnlyAccountDialog(email);
+                    }
+                });
+    }
+
+    /**
+     * Show dialog when user tries to sign in with email/password but account was created with Google
+     */
+    private void showGoogleOnlyAccountDialog(String email) {
+        LayoutInflater li = LayoutInflater.from(this);
+        View v = li.inflate(R.layout.dialog_custom, null);
+
+        TextView title = v.findViewById(R.id.loadingText);
+        TextView message = v.findViewById(R.id.dialogMessage);
+        ProgressBar pb = v.findViewById(R.id.loadingProgress);
+        MaterialButton pos = v.findViewById(R.id.dialogPositiveButton);
+        MaterialButton neg = v.findViewById(R.id.dialogNegativeButton);
+
+        pb.setVisibility(View.GONE);
+        title.setText("Password Sign-In Not Available");
+        message.setText("This account does not support password sign-in, please try Google sign-in method or password reset.");
+        title.setVisibility(View.VISIBLE);
+        message.setVisibility(View.VISIBLE);
+
+        pos.setText("Use Google Sign-In");
+        neg.setText("Reset Password");
+
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(v).setCancelable(true).create();
+        dialog.show();
+        if (dialog.getWindow() != null) dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        pos.setOnClickListener(view -> {
+            dialog.dismiss();
+            // Trigger Google Sign-In
+            if (mGoogleSignInClient != null) {
+                signInWithGoogle();
+            } else {
+                Toast.makeText(AuthActivity.this, "Google Sign-In not configured", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        neg.setOnClickListener(view -> {
+            dialog.dismiss();
+            // Send password reset email so they can set a password
+            sendPasswordResetEmailForGoogleAccount(email);
+        });
+    }
+
+    /**
+     * Send password reset email for Google-only accounts
+     */
+    private void sendPasswordResetEmailForGoogleAccount(String email) {
+        progressDialog.setMessage("Sending password reset email...");
+        progressDialog.show();
+
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
+                    progressDialog.dismiss();
+                    if (task.isSuccessful()) {
+                        showPasswordResetSentDialog(email);
+                    } else {
+                        Toast.makeText(AuthActivity.this, 
+                            "Failed to send reset email: " + 
+                            (task.getException() != null ? task.getException().getMessage() : "Unknown error"), 
+                            Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    /**
+     * Show confirmation that password reset email was sent
+     */
+    private void showPasswordResetSentDialog(String email) {
+        LayoutInflater li = LayoutInflater.from(this);
+        View v = li.inflate(R.layout.dialog_custom, null);
+
+        TextView title = v.findViewById(R.id.loadingText);
+        TextView message = v.findViewById(R.id.dialogMessage);
+        ProgressBar pb = v.findViewById(R.id.loadingProgress);
+        MaterialButton pos = v.findViewById(R.id.dialogPositiveButton);
+        MaterialButton neg = v.findViewById(R.id.dialogNegativeButton);
+
+        pb.setVisibility(View.GONE);
+        title.setText("Password Reset Email Sent");
+        message.setText("We've sent a password reset email to " + email + ".\n\nCheck your inbox and follow the link to set a password. After that, you'll be able to sign in with email and password.");
+        title.setVisibility(View.VISIBLE);
+        message.setVisibility(View.VISIBLE);
+
+        pos.setText("OK");
+        neg.setVisibility(View.GONE);
+
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(v).setCancelable(false).create();
+        dialog.show();
+        if (dialog.getWindow() != null) dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        pos.setOnClickListener(view -> {
+            dialog.dismiss();
+            showLanding();
+        });
+    }
+
+    private void attemptLogin() {
+        // Get email from the chip (already validated during detection)
+        String email = chipEmailText.getText().toString().trim();
+        String password = loginPassword.getText().toString().trim();
 
         if (TextUtils.isEmpty(password)) {
             loginPassword.setError("Password is required");
@@ -268,36 +657,32 @@ public class AuthActivity extends AppCompatActivity {
                         }
                     } else {
                         Exception exception = task.getException();
+                        String errorMessage = exception != null ? exception.getMessage() : "";
+                        
+                        Log.e("AuthActivity", "Login failed: " + errorMessage);
+                        
                         if (exception instanceof FirebaseAuthInvalidUserException) {
                             Toast.makeText(AuthActivity.this, "Account doesn't exist. Please create account first.", Toast.LENGTH_LONG).show();
                         } else if (exception instanceof FirebaseAuthInvalidCredentialsException) {
-                            Toast.makeText(AuthActivity.this, "Invalid password. Please try again.", Toast.LENGTH_SHORT).show();
+                            // Always check if it's a Google-only account when credentials are invalid
+                            // We'll let checkIfGoogleOnlyAccount determine if it's truly a Google-only account
+                            // or just a wrong password
+                            checkIfGoogleOnlyAccount(email);
                         } else {
-                            Toast.makeText(AuthActivity.this, "Login failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AuthActivity.this, "Login failed: " + errorMessage, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
     private void attemptRegister() {
-        String email = registerEmail.getText().toString().trim();
+        // Get email from the chip (already validated during detection)
+        String email = chipEmailTextSignup.getText().toString().trim();
         String name = registerName.getText().toString().trim();
         String password = registerPassword.getText().toString().trim();
         String confirmPassword = registerconfPassword.getText().toString().trim();
 
-        // Validation
-        if (TextUtils.isEmpty(email)) {
-            registerEmail.setError("Email is required");
-            registerEmail.requestFocus();
-            return;
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            registerEmail.setError("Please enter a valid email");
-            registerEmail.requestFocus();
-            return;
-        }
-
+        // Validation - email already validated, no need to check again
         if (TextUtils.isEmpty(name)) {
             registerName.setError("Name is required");
             registerName.requestFocus();
@@ -584,9 +969,28 @@ public class AuthActivity extends AppCompatActivity {
 
     /** Shows only the login form */
     private void showLogin() {
+        showLanding(); // Redirect to landing screen instead
+    }
+
+    /** Shows the landing screen with email input and Google Sign-In */
+    private void showLanding() {
         loginLayout.setVisibility(View.VISIBLE);
+        passwordLoginLayout.setVisibility(View.GONE);
         registerLayout.setVisibility(View.GONE);
         forgotpassLayout.setVisibility(View.GONE);
+        // Clear the email input when returning to landing
+        loginUsername.setText("");
+        clearErrors();
+    }
+
+    /** Shows the password login screen for existing users */
+    private void showPasswordLogin() {
+        loginLayout.setVisibility(View.GONE);
+        passwordLoginLayout.setVisibility(View.VISIBLE);
+        registerLayout.setVisibility(View.GONE);
+        forgotpassLayout.setVisibility(View.GONE);
+        // Clear password field when showing login screen
+        loginPassword.setText("");
         clearErrors();
     }
 
@@ -649,27 +1053,32 @@ public class AuthActivity extends AppCompatActivity {
     /** Shows only the register form */
     private void showRegister() {
         loginLayout.setVisibility(View.GONE);
+        passwordLoginLayout.setVisibility(View.GONE);
         registerLayout.setVisibility(View.VISIBLE);
         forgotpassLayout.setVisibility(View.GONE);
+        // Clear password fields when showing register screen
+        registerName.setText("");
+        registerPassword.setText("");
+        registerconfPassword.setText("");
         clearErrors();
     }
 
     /** Shows only the forgot password form */
     private void showForgot() {
         loginLayout.setVisibility(View.GONE);
+        passwordLoginLayout.setVisibility(View.GONE);
         registerLayout.setVisibility(View.GONE);
         forgotpassLayout.setVisibility(View.VISIBLE);
         clearErrors();
     }
 
     private void clearErrors() {
-        loginUsername.setError(null);
-        loginPassword.setError(null);
-        registerEmail.setError(null);
-        registerName.setError(null);
-        registerPassword.setError(null);
-        registerconfPassword.setError(null);
-        resetEmail.setError(null);
+        if (loginUsername != null) loginUsername.setError(null);
+        if (loginPassword != null) loginPassword.setError(null);
+        if (registerName != null) registerName.setError(null);
+        if (registerPassword != null) registerPassword.setError(null);
+        if (registerconfPassword != null) registerconfPassword.setError(null);
+        if (resetEmail != null) resetEmail.setError(null);
     }
 
     private void showPositiveButtonProgress(MaterialButton positiveButton, ProgressBar positiveProgress) {
@@ -729,7 +1138,7 @@ public class AuthActivity extends AppCompatActivity {
     private void updateStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
-            int color = ContextCompat.getColor(this, R.color.primary_dark);
+            int color = ContextCompat.getColor(this, R.color.primary);
             window.setStatusBarColor(color);
             WindowInsetsControllerCompat insetsController = WindowCompat.getInsetsController(window, window.getDecorView());
             boolean useDarkIcons = ColorUtils.calculateLuminance(color) > 0.5;

@@ -30,16 +30,33 @@
             android:background="@drawable/bg_topic_number"
             android:layout_marginEnd="16dp">
 
-            <TextView
-                android:id="@+id/topicNumber"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="26"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/on_surface" />
-                
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/topicNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="26"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/on_surface" />
+
+                <TextView
+                    android:id="@+id/topicChap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chapter"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/on_surface" />
+
+            </LinearLayout>
+
             <ImageView
                 android:id="@+id/topicCheckmark"
                 android:layout_width="24dp"
@@ -48,6 +65,7 @@
                 android:src="@drawable/ic_checkmark"
                 android:visibility="gone"
                 app:tint="@color/badge_done_fg" />
+
         </FrameLayout>
 
         <!-- Title and Description -->

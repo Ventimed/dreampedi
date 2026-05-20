@@ -23,6 +23,7 @@ import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -55,12 +56,24 @@ public class TopicActivity extends AppCompatActivity {
     public static final String EXTRA_HIGHLIGHT_TERM = "extra_highlight_term";
     public static final String EXTRA_RESUMED_FROM_RESUME = "extra_resumed_from_resume"; // new
 
-    private ImageView topicImage, bookmarkimg;
-    private LinearLayout imageContainer; // new: will hold multiple images below the text
+    private ImageView topicImage, bookmarkimg, backButton;
+    private LinearLayout imageContainer, fontSizeControls; // new: will hold multiple images below the text
     private TextView topicContent;
     private TextView topicTitleView;
-    private FrameLayout bookmarkButton;
+    private FrameLayout bookmarkButton, decreaseFontButton, increaseFontButton;
     private ScrollView topicScrollView;
+
+    // Font size settings
+    private static final float MIN_FONT_SIZE = 12f;
+    private static final float MAX_FONT_SIZE = 24f;
+    private static final float DEFAULT_FONT_SIZE = 16f;
+    private static final float FONT_SIZE_STEP = 2f;
+    private static final String PREF_FONT_SIZE = "content_font_size";
+    private float currentFontSize = DEFAULT_FONT_SIZE;
+
+    // Auto-hide settings
+    private static final long AUTO_HIDE_DELAY = 3000; // 3 seconds
+    private Runnable hideControlsRunnable;
 
     private final Executor io = Executors.newSingleThreadExecutor();
     private long rowid;
@@ -80,17 +93,27 @@ public class TopicActivity extends AppCompatActivity {
         topicScrollView = findViewById(R.id.topicScrollView);
         bookmarkimg = findViewById(R.id.bookmarkimg);
         imageContainer = findViewById(R.id.imageContainer);
+        backButton = findViewById(R.id.backButton);
+        decreaseFontButton = findViewById(R.id.decreaseFontButton);
+        increaseFontButton = findViewById(R.id.increaseFontButton);
+        fontSizeControls = findViewById(R.id.fontSizeControls);
+
+        // Initialize hide controls runnable
+        hideControlsRunnable = () -> hideFontControls();
 
         rowid = getIntent().getLongExtra(EXTRA_TOPIC_ROWID, -1);
         highlightTerm = getIntent().getStringExtra(EXTRA_HIGHLIGHT_TERM);
         boolean resumedFlag = getIntent().getBooleanExtra(EXTRA_RESUMED_FROM_RESUME, false);
+
+        // Load saved font size preference
+        loadFontSizePreference();
 
         if (rowid == -1) {
             finish();
             return;
         }
 
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) getSupportActionBar().hide();
 
         // Initialize Markwon for Markdown rendering
         markwon = Markwon.builder(this)
@@ -129,7 +152,153 @@ public class TopicActivity extends AppCompatActivity {
             }
         }
 
+        backButton.setOnClickListener(v -> finish());
         bookmarkButton.setOnClickListener(v -> toggleBookmarkForCurrentTopic());
+        
+        // Font size control listeners
+        decreaseFontButton.setOnClickListener(v -> {
+            decreaseFontSize();
+            resetAutoHideTimer();
+        });
+        increaseFontButton.setOnClickListener(v -> {
+            increaseFontSize();
+            resetAutoHideTimer();
+        });
+
+        // Set up tap to show controls
+        topicScrollView.setOnClickListener(v -> toggleFontControls());
+        topicContent.setOnClickListener(v -> toggleFontControls());
+    }
+
+    /**
+     * Show font controls and start auto-hide timer
+     */
+    private void showFontControls() {
+        if (fontSizeControls != null) {
+            fontSizeControls.setVisibility(View.VISIBLE);
+            fontSizeControls.setAlpha(0f);
+            fontSizeControls.animate()
+                    .alpha(1f)
+                    .setDuration(200)
+                    .start();
+        }
+    }
+
+    /**
+     * Hide font controls with animation
+     */
+    private void hideFontControls() {
+        if (fontSizeControls != null && fontSizeControls.getVisibility() == View.VISIBLE) {
+            fontSizeControls.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction(() -> {
+                        if (fontSizeControls != null) {
+                            fontSizeControls.setVisibility(View.GONE);
+                        }
+                    })
+                    .start();
+        }
+    }
+
+    /**
+     * Toggle font controls visibility
+     */
+    private void toggleFontControls() {
+        if (fontSizeControls != null) {
+            if (fontSizeControls.getVisibility() == View.VISIBLE) {
+                // If visible, hide immediately
+                topicScrollView.removeCallbacks(hideControlsRunnable);
+                hideFontControls();
+            } else {
+                // If hidden, show and start auto-hide timer
+                showFontControls();
+                resetAutoHideTimer();
+            }
+        }
+    }
+
+    /**
+     * Reset the auto-hide timer
+     */
+    private void resetAutoHideTimer() {
+        if (topicScrollView != null && hideControlsRunnable != null) {
+            topicScrollView.removeCallbacks(hideControlsRunnable);
+            topicScrollView.postDelayed(hideControlsRunnable, AUTO_HIDE_DELAY);
+        }
+    }
+
+    /**
+     * Show controls initially when content loads
+     */
+    private void showControlsInitially() {
+        showFontControls();
+        resetAutoHideTimer();
+    }
+
+    /**
+     * Load the saved font size preference
+     */
+    private void loadFontSizePreference() {
+        try {
+            currentFontSize = getSharedPreferences("TopicPreferences", MODE_PRIVATE)
+                    .getFloat(PREF_FONT_SIZE, DEFAULT_FONT_SIZE);
+            // Ensure it's within bounds
+            if (currentFontSize < MIN_FONT_SIZE) currentFontSize = MIN_FONT_SIZE;
+            if (currentFontSize > MAX_FONT_SIZE) currentFontSize = MAX_FONT_SIZE;
+        } catch (Exception e) {
+            currentFontSize = DEFAULT_FONT_SIZE;
+        }
+    }
+
+    /**
+     * Save the font size preference
+     */
+    private void saveFontSizePreference() {
+        try {
+            getSharedPreferences("TopicPreferences", MODE_PRIVATE)
+                    .edit()
+                    .putFloat(PREF_FONT_SIZE, currentFontSize)
+                    .apply();
+        } catch (Exception ignored) {
+        }
+    }
+
+    /**
+     * Decrease the font size of the content text
+     */
+    private void decreaseFontSize() {
+        if (currentFontSize > MIN_FONT_SIZE) {
+            currentFontSize -= FONT_SIZE_STEP;
+            if (currentFontSize < MIN_FONT_SIZE) {
+                currentFontSize = MIN_FONT_SIZE;
+            }
+            updateContentFontSize();
+            saveFontSizePreference();
+        }
+    }
+
+    /**
+     * Increase the font size of the content text
+     */
+    private void increaseFontSize() {
+        if (currentFontSize < MAX_FONT_SIZE) {
+            currentFontSize += FONT_SIZE_STEP;
+            if (currentFontSize > MAX_FONT_SIZE) {
+                currentFontSize = MAX_FONT_SIZE;
+            }
+            updateContentFontSize();
+            saveFontSizePreference();
+        }
+    }
+
+    /**
+     * Update the content text view with the new font size
+     */
+    private void updateContentFontSize() {
+        if (topicContent != null) {
+            topicContent.setTextSize(currentFontSize);
+        }
     }
 
     /**
@@ -241,6 +410,9 @@ public class TopicActivity extends AppCompatActivity {
                     markwon.setMarkdown(topicContent, rawContent);
                 }
 
+                // Apply saved font size
+                updateContentFontSize();
+
                 // Ensure links work
                 topicContent.setMovementMethod(LinkMovementMethod.getInstance());
                 topicContent.setHighlightColor(Color.TRANSPARENT);
@@ -265,6 +437,9 @@ public class TopicActivity extends AppCompatActivity {
                 } else topicImage.setVisibility(View.GONE);
 
                 updateBookmarkIcon();
+
+                // Show font controls initially for 3 seconds
+                showControlsInitially();
 
                 MainActivity main = MainActivity.getInstance();
                 if (main != null) {
@@ -642,7 +817,7 @@ public class TopicActivity extends AppCompatActivity {
     private void updateStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
-            int color = ContextCompat.getColor(this, R.color.toolbar_bg);
+            int color = ContextCompat.getColor(this, R.color.primary);
             window.setStatusBarColor(color);
 
             WindowInsetsControllerCompat insetsController =
@@ -657,5 +832,14 @@ public class TopicActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) { finish(); return true; }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Clean up callbacks to prevent memory leaks
+        if (topicScrollView != null && hideControlsRunnable != null) {
+            topicScrollView.removeCallbacks(hideControlsRunnable);
+        }
     }
 }

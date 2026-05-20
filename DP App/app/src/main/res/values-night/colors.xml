@@ -1,65 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Brand Colors - Dark Mode -->
-    <color name="primary">#F5A623</color>
-    <color name="toolbar_bg">#F5A623</color>
-    <color name="primary_dark">#E8960F</color>
-    <color name="primary_container">@color/primary_container_night</color>
-    <color name="on_primary">#7A4D00</color>
-    <color name="on_primary_dark">#5A3700</color>
-    <color name="snackbar">#1A1A1A</color>
-    <color name="navText">#B4B2A9</color>
-    <color name="on_primary_container">#3A2200</color>
-    <color name="toolbar_title_color">#5A3700</color>
-    
-    <!-- Night Mode - Backgrounds -->
-    <color name="surface">#1A1A18</color>
-    <color name="surface_variant">#2C2C2A</color>
-    <color name="surface_container">#2C2C2A</color>
+    <!-- Night Mode Colors -->
+    <color name="surface">@color/surface_night</color>
+    <color name="surface_variant">@color/surface_variant_night</color>
+    <color name="surface_container">@color/surface_container_night</color>
     <color name="surface_container_high">@color/surface_container_high_night</color>
+    <color name="nav_border_top">#333333</color>
     
-    <!-- Night Mode - Text -->
-    <color name="on_surface">#F1EFE8</color>
-    <color name="on_surface_variant">#B4B2A9</color>
+    <color name="on_surface">@color/on_surface_night</color>
+    <color name="on_surface_variant">@color/on_surface_variant_night</color>
     
-    <!-- Night Mode - Borders & Outlines -->
-    <color name="outline">#444441</color>
+    <color name="outline">@color/outline_night</color>
     <color name="outline_variant">@color/outline_variant_night</color>
-    
-    <!-- Button Colors - Dark Mode -->
-    <color name="button_stroke_dark">#888888</color>
-    
-    <!-- Chapter Card Icon Colors - Same for both modes -->
-    <color name="icon_amber_bg">#FEF3DC</color>
-    <color name="icon_amber_fg">#E8960F</color>
-    <color name="icon_teal_bg">#E1F5EE</color>
-    <color name="icon_teal_fg">#0F6E56</color>
-    <color name="icon_purple_bg">#EEEDFE</color>
-    <color name="icon_purple_fg">#534AB7</color>
-    
-    <!-- Accent Badges - Same for both modes -->
-    <color name="badge_warn_bg">#FEF3DC</color>
-    <color name="badge_warn_fg">#7A4D00</color>
-    <color name="badge_done_bg">#E1F5EE</color>
-    <color name="badge_done_fg">#0F6E56</color>
-    
-    <!-- Progress Colors - Dark Mode -->
-    <color name="progress_fill">#F5A623</color>
-    <color name="progress_done">#1D9E75</color>
-    <color name="progress_track">#3A3A38</color>
-    
-    <!-- Goal Pill Colors - Dark Mode -->
-    <color name="goal_pill_bg">#FFFFFF</color>
-    <color name="goal_pill_bg_alpha">#33FFFFFF</color>
-    <color name="goal_streak_bg">#4DFFFFFF</color>
-    
-    <!-- Subscribe Card Colors - Dark Mode -->
-    <color name="subscribe_card_bg">#FFEFD5</color>
-    
-    <!-- Night Mode - Navigation Bar -->
-    <color name="nav_background">#1A1A18</color>
-    <color name="nav_border_top">#444441</color>
-    <color name="nav_active_icon">#E8960F</color>
-    <color name="nav_inactive">#B4B2A9</color>
-
 </resources>
